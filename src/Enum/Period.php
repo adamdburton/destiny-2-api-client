@@ -2,10 +2,10 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Enum;
 
-class Period
+class Period extends Enum
 {
-	public const NONE = 0;
-	public const DAILY = 1;
-	public const ALLTIME = 2;
-	public const ACTIVITY = 3;
+	const None = 0;
+	const Daily = 1;
+	const AllTime = 2;
+	const Activity = 3;
 }
