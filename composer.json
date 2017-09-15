@@ -1,5 +1,5 @@
 {
-    "name": "adamburton/destiny-2-api-client",
+    "name": "adamdburton/destiny-2-api-client",
     "description": "PHP API client for Destiny 2",
     "type": "library",
     "license": "MIT",
