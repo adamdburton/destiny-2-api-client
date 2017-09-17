@@ -2,6 +2,11 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Enum;
 
+/**
+ * Class StatsGroup
+ * @package AdamDBurton\Destiny2ApiClient\Enum
+ * @see https://bungie-net.github.io/multi/schema_Destiny-HistoricalStats-Definitions-DestinyStatsGroupType.html
+ */
 class StatsGroup extends Enum
 {
 	const None = 0;

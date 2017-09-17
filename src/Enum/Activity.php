@@ -2,6 +2,11 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Enum;
 
+/**
+ * Class Activity
+ * @package AdamDBurton\Destiny2ApiClient\Enum
+ * @see https://bungie-net.github.io/multi/schema_Destiny-HistoricalStats-Definitions-DestinyActivityModeType.html
+ */
 class Activity extends Enum
 {
 	const None = 0;

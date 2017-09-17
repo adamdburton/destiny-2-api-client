@@ -4,6 +4,7 @@ namespace AdamDBurton\Destiny2ApiClient\Api\Module;
 
 use AdamDBurton\Destiny2ApiClient\Api\Module;
 use AdamDBurton\Destiny2ApiClient\Enum\Activity;
+use AdamDBurton\Destiny2ApiClient\Enum\Component;
 use AdamDBurton\Destiny2ApiClient\Enum\Period;
 use AdamDBurton\Destiny2ApiClient\Enum\StatsGroup;
 
@@ -58,6 +59,7 @@ class Destiny2 extends Module
 	/**
 	 * @param $membershipType
 	 * @param $destinyMembershipId
+	 * @param $components
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
@@ -66,12 +68,17 @@ class Destiny2 extends Module
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
-	public function getProfile($membershipType, $destinyMembershipId)
+	public function getProfile($membershipType, $destinyMembershipId, $components)
 	{
 		$this->assertIsMembershipType($membershipType);
 		$this->assertIsMembershipId($destinyMembershipId);
+		$this->assertIsComponentType($components);
 
-		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId);
+		$components = implode(',', Component::getEnumStringsFor($components));
+
+		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId, [
+			'components' => $components
+		]);
 	}
 
 	/**

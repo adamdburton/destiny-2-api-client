@@ -2,6 +2,11 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Enum;
 
+/**
+ * Class Membership
+ * @package AdamDBurton\Destiny2ApiClient\Enum
+ * @see https://bungie-net.github.io/multi/schema_BungieMembershipType.html
+ */
 class Membership extends Enum
 {
 	const None = 0;

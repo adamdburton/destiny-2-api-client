@@ -2,10 +2,12 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Api;
 
+use AdamDBurton\Destiny2ApiClient\Enum\Component;
 use AdamDBurton\Destiny2ApiClient\Enum\Membership;
 use AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidActivityType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidComponentType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemActivityId;
@@ -200,6 +202,21 @@ abstract class Module
 			if(!Membership::hasEnum($activityType))
 			{
 				throw new InvalidActivityType($activityType);
+			}
+		}
+	}
+
+	protected function assertIsComponentType($componentType)
+	{
+		if(is_array($componentType))
+		{
+			array_map([ $this, __METHOD__ ], $componentType);
+		}
+		else
+		{
+			if(!Component::hasEnum($componentType))
+			{
+				throw new InvalidComponentType($componentType);
 			}
 		}
 	}
