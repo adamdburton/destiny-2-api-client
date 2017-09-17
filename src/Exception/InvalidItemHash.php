@@ -2,7 +2,7 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Exception;
 
-class InvalidItemHash extends \Exception
+class InvalidItemHash extends Destiny2ApiException
 {
 	public function __construct($value)
 	{

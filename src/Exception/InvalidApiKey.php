@@ -2,7 +2,7 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Exception;
 
-class InvalidApiKey extends \Exception
+class InvalidApiKey extends Destiny2ApiException
 {
 	public function __construct($apiKey)
 	{

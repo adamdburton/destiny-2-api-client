@@ -2,7 +2,7 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Exception;
 
-class InvalidItemActivityId extends \Exception
+class InvalidItemActivityId extends Destiny2ApiException
 {
 	public function __construct($value)
 	{

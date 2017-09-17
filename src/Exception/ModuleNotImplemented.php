@@ -2,7 +2,7 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Exception;
 
-class ModuleNotImplemented extends \Exception
+class ModuleNotImplemented extends Destiny2ApiException
 {
 	public function __construct($value)
 	{

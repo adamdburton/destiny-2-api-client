@@ -2,7 +2,7 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Exception;
 
-class ApiUnavailable extends \Exception
+class ApiUnavailable extends Destiny2ApiException
 {
 
 }

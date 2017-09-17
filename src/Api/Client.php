@@ -3,8 +3,10 @@
 namespace AdamDBurton\Destiny2ApiClient\Api;
 
 use AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable;
+use AdamDBurton\Destiny2ApiClient\Exception\BadRequest;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidApiKey;
 use AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound;
+use AdamDBurton\Destiny2ApiClient\Exception\Unauthorized;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
@@ -21,9 +23,10 @@ class Client
 
 	/**
 	 * Client constructor.
-	 * @param string $apiRoot
 	 * @param null $apiKey
 	 * @param null $client
+	 * @param string $apiRoot
+	 * @throws InvalidApiKey
 	 */
 	public function __construct($apiKey = null, $client = null, $apiRoot = null)
 	{
@@ -31,17 +34,16 @@ class Client
 
 		if($apiRoot === null)
 		{
-			$apiRoot = 'https://bungie.net/Platform';
+			$apiRoot = 'https://www.bungie.net/Platform';
 		}
-
-		$this->apiKey = $apiKey;
-		$this->apiRoot = $apiRoot;
 
 		if($client === null)
 		{
 			$client = new GuzzleClient();
 		}
 
+		$this->apiKey = $apiKey;
+		$this->apiRoot = $apiRoot;
 		$this->client = $client;
 	}
 
@@ -76,74 +78,108 @@ class Client
 
 	/**
 	 * @param $endpoint
-	 * @param null $params
+	 * @param array $params
+	 * @param array $headers
 	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
-	public function get($endpoint, $params = null)
+	public function get($endpoint, $params = [], $headers = [])
 	{
-		return $this->request('GET', $endpoint, $params);
+		return $this->request('GET', $endpoint, [
+			'query' => $params,
+			'headers' => array_merge($headers, $this->headers())
+		]);
 	}
 
 	/**
 	 * @param $endpoint
-	 * @param null|array $data
+	 * @param array $data
+	 * @param array $headers
 	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
-	public function post($endpoint, $data = null)
+	public function postAsForm($endpoint, $data = [], $headers = [])
 	{
-		return $this->request('POST', $endpoint, $data);
+		return $this->request('POST', $endpoint, [
+			'form_params' => $data,
+			'headers' => array_merge($headers, $this->headers([
+				'Content-Type' => 'application/x-www-form-urlencoded'
+			]))
+		]);
 	}
 
 	/**
-	 * @param $apiKey
-	 * @throws InvalidApiKey
+	 * @param $endpoint
+	 * @param $data
+	 * @param array $headers
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
-	private function assertIsValidApiKey($apiKey)
+	public function postAsJson($endpoint, $data, $headers = [])
 	{
-		if(strlen($apiKey) != 32)
-		{
-			throw new InvalidApiKey($apiKey);
-		}
+		return $this->request('POST', $endpoint, [
+			'body' => json_encode($data),
+			'headers' => array_merge($headers, $this->headers([
+				'Content-Type' => 'application/json'
+			]))
+		]);
 	}
 
 	/**
 	 * @param $method
 	 * @param $endpoint
-	 * @param array $data
+	 * @param array $options
 	 * @return Response
 	 * @throws ApiUnavailable
 	 * @throws ResourceNotFound
+	 * @throws BadRequest
+	 * @throws Unauthorized
 	 */
-	private function request($method, $endpoint, $data = null)
+	private function request($method, $endpoint, $options = [])
 	{
 		try
 		{
-			$options = [
-				'body' => $method == 'GET' ? null : json_encode($data),
-				'query' => $method == 'GET' ? $data : null,
-				'headers' => $this->headers()
-			];
-
-			echo sprintf('%s request to %s', $method, $this->endpoint($endpoint));
-
 			return $this->processResponse(
-				$this->client->request($method, $this->endpoint($endpoint), array_filter($options))
+				$this->client->request($method, $this->endpoint($endpoint), $options)
 			);
 		}
 		catch(ClientException $e)
 		{
 			if($e->getCode() == 404)
 			{
-				throw new ResourceNotFound(sprintf('%s request to resource not found at %s', $method, $this->endpoint($endpoint)), $e->getCode(), $e);
+				throw new ResourceNotFound(sprintf('%s request to %s was not found.', $method, $this->endpoint($endpoint)), $e->getCode(), $e);
+			}
+			elseif($e->getCode() == 401)
+			{
+				throw new Unauthorized(sprintf('%s request to %s resulted in an authorization error.', $method, $this->endpoint($endpoint)), $e->getCode(), $e);
+			}
+			elseif($e->getCode() == 400)
+			{
+				$response = json_decode((string) $e->getResponse()->getBody());
+
+				throw new BadRequest(sprintf('Request error (%s): %s', $response->error, $response->error_description), $e->getCode(), $e);
+			}
+			else
+			{
+				 throw $e;
 			}
 		}
 		catch(ServerException $e)
 		{
-			throw new ApiUnavailable(sprintf('%s request to resource not found at %s', $method, $this->endpoint($endpoint)), $e->getCode(), $e);
+			throw new ApiUnavailable(sprintf('%s request to %s resulted in a server error.', $method, $this->endpoint($endpoint)), $e->getCode(), $e);
 		}
 		catch(RequestException $e)
 		{
-			throw new ApiUnavailable(sprintf('%s request to resource not found at %s', $method, $this->endpoint($endpoint)), $e->getCode(), $e);
+			throw new ApiUnavailable(sprintf('%s request to %s resulted in a request error.', $method, $this->endpoint($endpoint)), $e->getCode(), $e);
 		}
 	}
 
@@ -162,19 +198,31 @@ class Client
 	 */
 	private function endpoint($endpoint)
 	{
-		return $this->apiRoot . '/' . ltrim($endpoint, '/');
+		return $this->apiRoot . '/' . trim($endpoint, '/') . '/';
 	}
 
 	/**
+	 * @param array $mergeHeaders
 	 * @return array
 	 */
-	private function headers()
+	private function headers($mergeHeaders = [])
 	{
-		return array_filter([
+		return array_filter(array_merge([
 			'X-API-KEY' => $this->apiKey,
 			'Authorization' => $this->accessToken ? ('Bearer ' . $this->accessToken) : null,
-			'Accept' => 'application/json',
-			'Content-Type' => 'application/json'
-		]);
+			'Accept' => 'application/json'
+		], $mergeHeaders));
+	}
+
+	/**
+	 * @param $apiKey
+	 * @throws InvalidApiKey
+	 */
+	private function assertIsValidApiKey($apiKey)
+	{
+		if(strlen($apiKey) != 32)
+		{
+			throw new InvalidApiKey($apiKey);
+		}
 	}
 }

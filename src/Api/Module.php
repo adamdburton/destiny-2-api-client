@@ -161,6 +161,10 @@ abstract class Module
 		}
 	}
 
+	/**
+	 * @param $milestoneHash
+	 * @throws InvalidMilestoneHash
+	 */
 	protected function assertIsMilestoneHash($milestoneHash)
 	{
 		if(!strlen(decbin(~$milestoneHash)) == 32)
@@ -181,6 +185,10 @@ abstract class Module
 		}
 	}
 
+	/**
+	 * @param $activityType
+	 * @throws InvalidActivityType
+	 */
 	protected function assertIsActivityType($activityType)
 	{
 		if(is_array($activityType))

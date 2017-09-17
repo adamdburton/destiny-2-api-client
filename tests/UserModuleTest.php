@@ -2,7 +2,7 @@
 
 use AdamDBurton\Destiny2ApiClient\Api;
 use AdamDBurton\Destiny2ApiClient\Api\Module\User;
-use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -10,8 +10,8 @@ use PHPUnit\Framework\TestCase;
 
 function api($responses = [], $apiKey = 'abcdefghijklmnopqrstuvqxyz123456', $apiRoot = null)
 {
-	return new Api($apiKey, new GuzzleClient([
-		'handler' => HandlerStack::create(new MockHandler([ $responses ]))
+	return new Api($apiKey, new Client([
+		'handler' => HandlerStack::create(new MockHandler($responses)),
 	]), $apiRoot);
 }
 
@@ -27,10 +27,8 @@ final class UserModuleTest extends TestCase
 
 	public function testGetBungieNetUserById()
 	{
-		$expected = [];
-		$actual = api([ new Response(200, [], json_encode([ 'this is' => 'a test' ])) ])->user()->getBungieNetUserById(self::$membershipId);
-
-		var_dump($actual->getResponse());
+		$expected = (object) [ 'this is' => 'a test' ];
+		$actual = api([ new Response(200, [ 'test' => '123' ], json_encode([ 'this is' => 'a test' ])) ])->user()->getBungieNetUserById(self::$membershipId);
 
 		$this->assertEquals($expected, $actual->getResponse());
 	}

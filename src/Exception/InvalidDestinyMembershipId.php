@@ -2,7 +2,7 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Exception;
 
-class InvalidDestinyMembershipId extends \Exception
+class InvalidDestinyMembershipId extends Destiny2ApiException
 {
 	public function __construct($value)
 	{

@@ -2,7 +2,7 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Exception;
 
-class ResourceNotFound extends Destiny2ApiException
+class Unauthorized extends Destiny2ApiException
 {
 
 }

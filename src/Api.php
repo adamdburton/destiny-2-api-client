@@ -3,49 +3,66 @@
 namespace AdamDBurton\Destiny2ApiClient;
 
 use AdamDBurton\Destiny2ApiClient\Api\Client;
+use AdamDBurton\Destiny2ApiClient\Api\Module\App;
 use AdamDBurton\Destiny2ApiClient\Api\Module\Destiny2;
 use AdamDBurton\Destiny2ApiClient\Api\Module\User;
 use AdamDBurton\Destiny2ApiClient\Exception\ModuleNotImplemented;
 
+/**
+ * Class Api
+ * @package AdamDBurton\Destiny2ApiClient
+ * @method App app()
+ * @method Destiny2 destiny2()
+ * @method User user()
+ */
 class Api
 {
 	private $apiClient;
+	private $modules = [];
 
+	/**
+	 * Api constructor.
+	 * @param $apiKey
+	 * @param null $client
+	 * @param null $apiRoot
+	 */
 	public function __construct($apiKey, $client = null, $apiRoot = null)
 	{
 		$this->apiClient = new Client($apiKey, $client = null, $apiRoot = null);
 	}
 
 	/**
-	 * @return User
+	 * @param $name
+	 * @param $arguments
+	 * @return App|Destiny2|User
+	 * @throws ModuleNotImplemented
 	 */
-	public function user()
+	public function __call($name, $arguments)
 	{
-		return new User($this->apiClient);
+		return $this->__get($name);
 	}
 
-	public function destiny2()
+	/**
+	 * @param $name
+	 * @return App|Destiny2|User
+	 * @throws ModuleNotImplemented
+	 */
+	public function __get($name)
 	{
-		return new Destiny2($this->apiClient);
-	}
+		$class = __NAMESPACE__ . '\\' . ucfirst($name);
 
-	public function forum()
-	{
-		throw new ModuleNotImplemented(__METHOD__);
-	}
+		if(!isset($this->modules[$name]))
+		{
+			if(class_exists($class))
+			{
+				$this->modules[$name] = new $class($this->apiClient);
+			}
+			else
+			{
+				throw new ModuleNotImplemented($name);
+			}
+		}
 
-	public function groupV2()
-	{
-		throw new ModuleNotImplemented(__METHOD__);
-	}
-
-	public function communityContent()
-	{
-		throw new ModuleNotImplemented(__METHOD__);
-	}
-
-	public function trending()
-	{
-		throw new ModuleNotImplemented(__METHOD__);
+		return $this->modules[$name];
 	}
 }

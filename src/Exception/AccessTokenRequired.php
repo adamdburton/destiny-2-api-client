@@ -2,7 +2,7 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Exception;
 
-class AccessTokenRequired extends \Exception
+class AccessTokenRequired extends Destiny2ApiException
 {
 	public function __construct()
 	{

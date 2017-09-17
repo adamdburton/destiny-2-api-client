@@ -9,6 +9,9 @@ class User extends Module
 	/**
 	 * @param $membershipId
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 */
 	public function getBungieNetUserById($membershipId)
 	{
@@ -20,6 +23,9 @@ class User extends Module
 	/**
 	 * @param $membershipId
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 */
 	public function getUserByAliases($membershipId)
 	{
@@ -31,6 +37,8 @@ class User extends Module
 	/**
 	 * @param $search
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 */
 	public function searchUsers($search)
 	{
@@ -39,6 +47,8 @@ class User extends Module
 
 	/**
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 */
 	public function getAvailableThemes()
 	{
@@ -49,6 +59,10 @@ class User extends Module
 	 * @param $membershipId
 	 * @param $membershipType
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 */
 	public function getMembershipDataById($membershipId, $membershipType)
 	{
@@ -60,17 +74,23 @@ class User extends Module
 
 	/**
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 */
 	public function getMembershipDataForCurrentUser()
 	{
 		$this->assertHasAccessToken();
 
-		return $this->apiClient->get('User/GetMembershipDataForCurrentUser');
+		return $this->apiClient->get('User/GetMembershipsForCurrentUser');
 	}
 
 	/**
 	 * @param $membershipId
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 */
 	public function getPartnerships($membershipId)
 	{
