@@ -49,7 +49,7 @@ class Api
 	 */
 	public function __get($name)
 	{
-		$class = __NAMESPACE__ . '\\' . ucfirst($name);
+		$class = __NAMESPACE__ . '\\Api\\Module\\' . ucfirst($name);
 
 		if(!isset($this->modules[$name]))
 		{
