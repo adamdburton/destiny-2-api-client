@@ -59,7 +59,7 @@ class Destiny2 extends Module
 	/**
 	 * @param $membershipType
 	 * @param $destinyMembershipId
-	 * @param $components
+	 * @param int|int[] $components
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
@@ -437,7 +437,7 @@ class Destiny2 extends Module
 	 * @param $membershipTypeId
 	 * @param $destinyMembershipId
 	 * @param $maxPlayers
-	 * @param $modes
+	 * @param int|int[]|null $modes
 	 * @param $statId
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
@@ -468,7 +468,7 @@ class Destiny2 extends Module
 	 * @param $destinyMembershipId
 	 * @param $characterId
 	 * @param null $maxPlayers
-	 * @param null $modes
+	 * @param int|int[]|null $modes
 	 * @param null $statId
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
@@ -519,8 +519,8 @@ class Destiny2 extends Module
 	 * @param $characterId
 	 * @param null $dayEnd
 	 * @param null $dayStart
-	 * @param null $groups
-	 * @param null $modes
+	 * @param int|int[]|null $groups
+	 * @param int|int[]|null $modes
 	 * @param null $periodType
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
@@ -552,7 +552,7 @@ class Destiny2 extends Module
 	/**
 	 * @param $membershipTypeId
 	 * @param $destinyMembershipId
-	 * @param $groups
+	 * @param int|int[]|null $groups
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
@@ -561,7 +561,7 @@ class Destiny2 extends Module
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
-	public function GetHistoricalStatsForAccount($membershipTypeId, $destinyMembershipId, $groups)
+	public function GetHistoricalStatsForAccount($membershipTypeId, $destinyMembershipId, $groups = null)
 	{
 		$this->assertIsMembershipType($membershipTypeId);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);

@@ -40,7 +40,7 @@ abstract class Enum
 		}
 		else
 		{
-			return $constants;
+			return [ $constants ];
 		}
 	}
 
