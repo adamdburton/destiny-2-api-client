@@ -63,6 +63,7 @@ class Destiny2 extends Module
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidComponentType
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
