@@ -40,7 +40,7 @@ class Response
 	}
 
 	/**
-	 * @return \stdClass
+	 * @return \stdClass|\stdClass[]
 	 */
 	public function getData()
 	{

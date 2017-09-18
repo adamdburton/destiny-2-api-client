@@ -545,7 +545,7 @@ class Destiny2 extends Module
 			'daystart' => $dayStart,
 			'groups' => $groups,
 			'modes' => $modes,
-			'periodType' => Period::getEnumStringFor($periodType)
+			'periodType' => $periodType ? Period::getEnumStringFor($periodType) : null
 		]);
 	}
 
