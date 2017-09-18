@@ -27,21 +27,19 @@ abstract class Enum
 
 	public static function getEnumStringsFor($constants)
 	{
-		if(is_array($constants))
+		if(!is_array($constants))
 		{
-			$flipped = array_flip(self::getEnums());
-
-			$mapped = array_map(function($value) use ($flipped)
-			{
-				return $flipped[$value];
-			}, $constants);
-
-			return array_filter($mapped);
+			$constants = [ $constants ];
 		}
-		else
+
+		$flipped = array_flip(self::getEnums());
+
+		$mapped = array_map(function($value) use ($flipped)
 		{
-			return [ $constants ];
-		}
+			return $flipped[$value];
+		}, $constants);
+
+		return array_filter($mapped);
 	}
 
 	public static function hasEnum($enum)
