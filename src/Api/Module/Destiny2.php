@@ -86,6 +86,7 @@ class Destiny2 extends Module
 	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $characterId
+	 * @param int|int[] $components
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
@@ -95,13 +96,17 @@ class Destiny2 extends Module
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
-	public function getCharacter($membershipType, $destinyMembershipId, $characterId)
+	public function getCharacter($membershipType, $destinyMembershipId, $characterId, $components)
 	{
 		$this->assertIsMembershipType($membershipType);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
 
-		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId);
+		$components = implode(',', Component::getEnumStringsFor($components));
+
+		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId, [
+			'components' => $components
+		]);
 	}
 
 	/**
