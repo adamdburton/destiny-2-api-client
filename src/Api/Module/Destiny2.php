@@ -494,7 +494,7 @@ class Destiny2 extends Module
 
 		$modes = $modes ? implode(',', Activity::getEnumStringsFor($modes)) : null;
 
-		return $this->apiClient->get('Destiny2/Stats/Leaderboard/' . $membershipTypeId .'/' . $destinyMembershipId . '/' . $characterId, [
+		return $this->apiClient->get('Destiny2/Stats/Leaderboards/' . $membershipTypeId .'/' . $destinyMembershipId . '/' . $characterId, [
 			'maxtop' => $maxPlayers,
 			'modes' => $modes,
 			'statid' => $statId
