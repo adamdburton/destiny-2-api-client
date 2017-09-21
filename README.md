@@ -1,5 +1,7 @@
 # PHP API client for Destiny 2
 
+[![Packagist](https://img.shields.io/packagist/v/adamdburton/destiny-2-api-client.svg)](https://packagist.org/packages/adamdburton/destiny-2-api-client)
+
 ## API Documentation
 
 Endpoint documentation is available at https://bungie-net.github.io/multi/
