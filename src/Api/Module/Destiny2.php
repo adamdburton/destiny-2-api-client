@@ -566,7 +566,7 @@ class Destiny2 extends Module
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
-	public function GetHistoricalStatsForAccount($membershipTypeId, $destinyMembershipId, $groups = null)
+	public function getHistoricalStatsForAccount($membershipTypeId, $destinyMembershipId, $groups = null)
 	{
 		$this->assertIsMembershipType($membershipTypeId);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
