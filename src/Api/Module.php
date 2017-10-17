@@ -3,12 +3,20 @@
 namespace AdamDBurton\Destiny2ApiClient\Api;
 
 use AdamDBurton\Destiny2ApiClient\Enum\Component;
+use AdamDBurton\Destiny2ApiClient\Enum\ForumPostSort;
+use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicCategoryFilter;
+use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicQuickDate;
+use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicSort;
 use AdamDBurton\Destiny2ApiClient\Enum\Membership;
 use AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidActivityType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidComponentType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumPostSort;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicCategoryFilter;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicQuickDate;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicSort;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemActivityId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemHash;
@@ -218,6 +226,38 @@ abstract class Module
 			{
 				throw new InvalidComponentType($componentType);
 			}
+		}
+	}
+
+	protected function assertIsForumTopicQuickDate($quickDate)
+	{
+		if(!ForumTopicQuickDate::hasEnum($quickDate))
+		{
+			throw new InvalidForumTopicQuickDate($quickDate);
+		}
+	}
+
+	protected function assertIsForumTopicCategoryFilter($category)
+	{
+		if(!ForumTopicCategoryFilter::hasEnum($category))
+		{
+			throw new InvalidForumTopicCategoryFilter($category);
+		}
+	}
+
+	protected function assertIsForumTopicSort($sort)
+	{
+		if(!ForumTopicSort::hasEnum($sort))
+		{
+			throw new InvalidForumTopicSort($sort);
+		}
+	}
+
+	protected function assertIsForumPostSort($sort)
+	{
+		if(!ForumPostSort::hasEnum($sort))
+		{
+			throw new InvalidForumPostSort($sort);
 		}
 	}
 
