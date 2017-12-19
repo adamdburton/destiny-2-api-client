@@ -10,7 +10,7 @@ namespace AdamDBurton\Destiny2ApiClient\Enum;
 class Component extends Enum
 {
 	const None = 0;
-	const Profiles = 101;
+	const Profiles = 100;
 	const VendorReceipts = 101;
 	const ProfileInventories = 102;
 	const ProfileCurrencies = 103;
