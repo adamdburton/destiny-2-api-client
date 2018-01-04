@@ -20,6 +20,13 @@ class Forum extends Module
 	 * @param string $locales
 	 * @param string $tagString
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicCategoryFilter
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicQuickDate
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicSort
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 * @internal param $membershipId
 	 */
 	public function getTopicsPaged($page, $pageSize, $group, $sort, $quickDate, $categoryFilter, $locales = 'en', $tagString = '')
@@ -45,6 +52,13 @@ class Forum extends Module
 	 * @param ForumTopicCategoryFilter $categoryFilter
 	 * @param string $locales
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicCategoryFilter
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicQuickDate
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicSort
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
 	public function getCoreTopicsPaged($page, $sort, $quickDate, $categoryFilter, $locales = 'en')
 	{
@@ -71,6 +85,11 @@ class Forum extends Module
 	 * @param ForumPostSort $sortMode
 	 * @param bool $showBanned
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumPostSort
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
 	public function GetPostsThreadedPaged($parentPostId, $page, $pageSize, $replySize, $getParentPost, $rootThreadMode, $sortMode, $showBanned = false)
 	{
@@ -83,4 +102,6 @@ class Forum extends Module
 			'showbanned' => $showBanned
 		]);
 	}
+
+	public function
 }

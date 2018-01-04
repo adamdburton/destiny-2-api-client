@@ -7,9 +7,12 @@ use AdamDBurton\Destiny2ApiClient\Enum\ForumPostSort;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicCategoryFilter;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicQuickDate;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicSort;
+use AdamDBurton\Destiny2ApiClient\Enum\GroupDateRange;
+use AdamDBurton\Destiny2ApiClient\Enum\GroupType;
 use AdamDBurton\Destiny2ApiClient\Enum\Membership;
 use AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidActivityType;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidBoolean;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidComponentType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId;
@@ -17,13 +20,16 @@ use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumPostSort;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicCategoryFilter;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicQuickDate;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicSort;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupDateRange;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemActivityId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemHash;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidMilestoneHash;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidString;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidVendorHash;
 
 abstract class Module
@@ -66,6 +72,30 @@ abstract class Module
 	public function hasAccessToken()
 	{
 		return $this->apiClient->hasAccessToken();
+	}
+
+	/**
+	 * @param $string
+	 * @throws InvalidString
+	 */
+	public function assertIsString($string)
+	{
+		if(!is_string($string))
+		{
+			throw new InvalidString($string);
+		}
+	}
+
+	/**
+	 * @param $boolean
+	 * @throws InvalidBoolean
+	 */
+	public function assertIsBoolean($boolean)
+	{
+		if(!is_bool($boolean))
+		{
+			throw new InvalidBoolean($boolean);
+		}
 	}
 
 	/**
@@ -214,6 +244,10 @@ abstract class Module
 		}
 	}
 
+	/**
+	 * @param $componentType
+	 * @throws InvalidComponentType
+	 */
 	protected function assertIsComponentType($componentType)
 	{
 		if(is_array($componentType))
@@ -229,6 +263,10 @@ abstract class Module
 		}
 	}
 
+	/**
+	 * @param $quickDate
+	 * @throws InvalidForumTopicQuickDate
+	 */
 	protected function assertIsForumTopicQuickDate($quickDate)
 	{
 		if(!ForumTopicQuickDate::hasEnum($quickDate))
@@ -237,6 +275,10 @@ abstract class Module
 		}
 	}
 
+	/**
+	 * @param $category
+	 * @throws InvalidForumTopicCategoryFilter
+	 */
 	protected function assertIsForumTopicCategoryFilter($category)
 	{
 		if(!ForumTopicCategoryFilter::hasEnum($category))
@@ -245,6 +287,10 @@ abstract class Module
 		}
 	}
 
+	/**
+	 * @param $sort
+	 * @throws InvalidForumTopicSort
+	 */
 	protected function assertIsForumTopicSort($sort)
 	{
 		if(!ForumTopicSort::hasEnum($sort))
@@ -253,11 +299,39 @@ abstract class Module
 		}
 	}
 
+	/**
+	 * @param $sort
+	 * @throws InvalidForumPostSort
+	 */
 	protected function assertIsForumPostSort($sort)
 	{
 		if(!ForumPostSort::hasEnum($sort))
 		{
 			throw new InvalidForumPostSort($sort);
+		}
+	}
+
+	/**
+	 * @param $groupType
+	 * @throws InvalidGroupType
+	 */
+	protected function assertIsGroupType($groupType)
+	{
+		if(!GroupType::hasEnum($groupType))
+		{
+			throw new InvalidGroupType($groupType);
+		}
+	}
+
+	/**
+	 * @param $dateRange
+	 * @throws InvalidGroupDateRange
+	 */
+	protected function assertIsGroupDateRange($dateRange)
+	{
+		if(!GroupDateRange::hasEnum($groupType))
+		{
+			throw new InvalidGroupDateRange($groupType);
 		}
 	}
 

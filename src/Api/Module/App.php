@@ -21,7 +21,9 @@ class App extends Module
 	 * @param $oAuthClientSecret
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
 	public function getAccessTokenFromAuthCode($authCode, $oAuthClientId, $oAuthClientSecret)
 	{
@@ -36,7 +38,9 @@ class App extends Module
 	 * @param $oAuthClientSecret
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
 	public function getAccessTokenFromRefreshToken($refreshToken, $oAuthClientId, $oAuthClientSecret)
 	{

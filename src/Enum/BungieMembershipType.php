@@ -7,7 +7,7 @@ namespace AdamDBurton\Destiny2ApiClient\Enum;
  * @package AdamDBurton\Destiny2ApiClient\Enum
  * @see https://bungie-net.github.io/multi/schema_BungieMembershipType.html
  */
-class Membership extends Enum
+class BungieMembershipType extends Enum
 {
 	const None = 0;
 	const TigerXbox = 1;

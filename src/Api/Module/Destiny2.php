@@ -3,7 +3,7 @@
 namespace AdamDBurton\Destiny2ApiClient\Api\Module;
 
 use AdamDBurton\Destiny2ApiClient\Api\Module;
-use AdamDBurton\Destiny2ApiClient\Enum\Activity;
+use AdamDBurton\Destiny2ApiClient\Enum\ActivityType;
 use AdamDBurton\Destiny2ApiClient\Enum\Component;
 use AdamDBurton\Destiny2ApiClient\Enum\Period;
 use AdamDBurton\Destiny2ApiClient\Enum\StatsGroup;
@@ -459,7 +459,7 @@ class Destiny2 extends Module
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsActivityType($modes);
 
-		$modes = implode(',', Activity::getEnumStringsFor($modes));
+		$modes = implode(',', ActivityType::getEnumStringsFor($modes));
 
 		return $this->apiClient->get('Destiny2/' . $membershipTypeId .'/Account/' . $destinyMembershipId . '/Stats/Leaderboards', [
 			'maxtop' => $maxPlayers,
@@ -492,7 +492,7 @@ class Destiny2 extends Module
 		$this->assertIsCharacterId($characterId);
 		$this->assertIsActivityType($modes);
 
-		$modes = $modes ? implode(',', Activity::getEnumStringsFor($modes)) : null;
+		$modes = $modes ? implode(',', ActivityType::getEnumStringsFor($modes)) : null;
 
 		return $this->apiClient->get('Destiny2/Stats/Leaderboards/' . $membershipTypeId .'/' . $destinyMembershipId . '/' . $characterId, [
 			'maxtop' => $maxPlayers,
@@ -542,7 +542,7 @@ class Destiny2 extends Module
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
 
-		$modes = $modes ? implode(',', Activity::getEnumStringsFor($modes)) : null;
+		$modes = $modes ? implode(',', ActivityType::getEnumStringsFor($modes)) : null;
 		$groups = $groups ? implode(',', StatsGroup::getEnumStringsFor($groups)) : null;
 
 		return $this->apiClient->get('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats', [

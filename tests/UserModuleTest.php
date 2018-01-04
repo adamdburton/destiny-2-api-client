@@ -25,6 +25,13 @@ final class UserModuleTest extends TestCase
 		$this->assertInstanceOf(User::class, api()->user());
 	}
 
+	/**
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 */
 	public function testGetBungieNetUserById()
 	{
 		$expected = (object) [ 'this is' => 'a test' ];

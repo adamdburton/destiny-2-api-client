@@ -46,4 +46,11 @@ abstract class Enum
 	{
 		return in_array($enum, self::getEnums());
 	}
+
+	public function getException()
+	{
+		$reflect = new ReflectionClass($this);
+
+		return '\AdamDBurton\Destiny2ApiClient\Exception\Invalid' . $reflect->getShortName();
+	}
 }
