@@ -7,7 +7,7 @@ namespace AdamDBurton\Destiny2ApiClient\Enum;
  * @package AdamDBurton\Destiny2ApiClient\Enum
  * @see https://bungie-net.github.io/multi/schema_Destiny-HistoricalStats-Definitions-DestinyActivityModeType.html
  */
-class ActivityType extends Enum
+class DestinyActivityModeType extends Enum
 {
 	const None = 0;
 	const Story = 2;

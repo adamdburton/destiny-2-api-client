@@ -72,21 +72,41 @@ abstract class Struct
 
 				throw new $exceptionClass($value);
 			}
-
-			$this->data[$attribute] = $value;
 		}
-		elseif(gettype($value) == $type)
+		elseif(preg_match('/(.*)\[\]$/', $type, $matches))
 		{
-			$this->data[$attribute] = $value;
+			// Class array type, like \Namespace\SomeClass[]
+			// We want to check that every value in the supposed array has the specified class (or is a subclass of it)
+
+			if(!is_array($value))
+			{
+				throw new InvalidAttributeType($attribute, 'array');
+			}
+
+			$classType = $matches[1];
+
+			foreach($value as $item)
+			{
+				if(!is_object($item) || !is_subclass_of($item, $classType))
+				{
+					throw new InvalidAttributeType($attribute, $classType);
+				}
+			}
 		}
 		elseif(gettype($value) != $type)
 		{
-			// Standard php type, check type equality
+			// Standard php type, but type equality
 
 			throw new InvalidAttributeType($attribute, $type);
 		}
+
+		$this->data[$attribute] = $value;
 	}
 
+	/**
+	 * @param $attribute
+	 * @return mixed|null
+	 */
 	public function getAttribute($attribute)
 	{
 		return isset($this->data[$attribute]) ? $this->data[$attribute] : null;

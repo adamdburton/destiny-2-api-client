@@ -4,22 +4,28 @@ namespace AdamDBurton\Destiny2ApiClient\Api\Module;
 
 use AdamDBurton\Destiny2ApiClient\Api\Module;
 use AdamDBurton\Destiny2ApiClient\Api\Response;
+use AdamDBurton\Destiny2ApiClient\Enum\BungieMembershipType;
+use AdamDBurton\Destiny2ApiClient\Enum\GroupDateRange;
+use AdamDBurton\Destiny2ApiClient\Enum\GroupsForMemberFilter;
+use AdamDBurton\Destiny2ApiClient\Enum\GroupType;
 use AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired;
 use AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable;
 use AdamDBurton\Destiny2ApiClient\Exception\BadRequest;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidBoolean;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupDateRange;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidString;
 use AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound;
 use AdamDBurton\Destiny2ApiClient\Exception\Unauthorized;
 use AdamDBurton\Destiny2ApiClient\Struct\ClanBanner;
 use AdamDBurton\Destiny2ApiClient\Struct\GroupAction;
+use AdamDBurton\Destiny2ApiClient\Struct\GroupApplicationListRequest;
+use AdamDBurton\Destiny2ApiClient\Struct\GroupApplicationRequest;
 use AdamDBurton\Destiny2ApiClient\Struct\GroupBanRequest;
 use AdamDBurton\Destiny2ApiClient\Struct\GroupEditAction;
+use AdamDBurton\Destiny2ApiClient\Struct\GroupOptionalConversationAddRequest;
+use AdamDBurton\Destiny2ApiClient\Struct\GroupOptionalConversationEditRequest;
+use AdamDBurton\Destiny2ApiClient\Struct\GroupOptionsEditAction;
 use AdamDBurton\Destiny2ApiClient\Struct\GroupQuery;
 
 class GroupV2 extends Module
@@ -56,20 +62,22 @@ class GroupV2 extends Module
 
 	/**
 	 * @param $membershipType
+	 * @param $allow
 	 * @return Response
 	 * @throws AccessTokenRequired
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
-	 * @throws InvalidMembershipType
+	 * @throws InvalidBoolean
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
-	 * @throws InvalidBoolean
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
 	 */
 	public function setUserClanInviteSetting($membershipType, $allow)
 	{
 		$this->assertHasAccessToken();
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsBoolean($allow);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->get('GroupV2/GetUserClanInviteSetting/' . $membershipType . '/' . ($allow ? 1 : 0));
 	}
@@ -81,16 +89,16 @@ class GroupV2 extends Module
 	 * @throws AccessTokenRequired
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
-	 * @throws InvalidGroupDateRange
-	 * @throws InvalidGroupType
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
 	 */
 	public function getRecommendedGroups($groupType, $dateRange)
 	{
 		$this->assertHasAccessToken();
-		$this->assertIsGroupType($groupType);
-		$this->assertIsGroupDateRange($dateRange);
+		$this->assertIsEnum($groupType, GroupType::class);
+		$this->assertIsEnum($dateRange, GroupDateRange::class);
 
 		return $this->apiClient->get('GroupV2/Recommended/' . $groupType . '/' . $dateRange);
 	}
@@ -133,15 +141,16 @@ class GroupV2 extends Module
 	 * @return Response
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
-	 * @throws InvalidGroupType
 	 * @throws InvalidString
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
 	 */
 	public function getGroupByName($name, $groupType)
 	{
 		$this->assertIsString($name);
-		$this->assertIsGroupType($groupType);
+		$this->assertIsEnum($groupType, GroupType::class);
 
 		return $this->apiClient->get('GroupV2/Name/' . $name . '/' . $groupType);
 	}
@@ -259,6 +268,7 @@ class GroupV2 extends Module
 	 * @throws InvalidGroupId
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupConversationId
 	 */
 	public function editOptionalConversation($groupId, $conversationId, GroupOptionalConversationEditRequest $request)
 	{
@@ -315,18 +325,18 @@ class GroupV2 extends Module
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidGroupId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidMembershipId
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
-	 * @throws InvalidMembershipId
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
 	 */
-	public function EditGroupMembership($groupId, $membershipType, $membershipId, $groupMemberType)
+	public function editGroupMembership($groupId, $membershipType, $membershipId, $groupMemberType)
 	{
 		$this->assertHasAccessToken();
 		$this->assertIsGroupId($groupId);
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsMembershipId($membershipId);
-		$this->assertIsGroupMemberType($groupMemberType);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/' . $membershipType . '/' . $membershipId . '/SetMembershipType/' . $groupMemberType);
 	}
@@ -340,17 +350,18 @@ class GroupV2 extends Module
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidGroupId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidMembershipId
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
-	 * @throws InvalidMembershipId
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
 	 */
 	public function kickMember($groupId, $membershipType, $membershipId)
 	{
 		$this->assertHasAccessToken();
 		$this->assertIsGroupId($groupId);
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsMembershipId($membershipId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/' . $membershipType . '/' . $membershipId . '/Kick');
 	}
@@ -365,17 +376,18 @@ class GroupV2 extends Module
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidGroupId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidMembershipId
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
-	 * @throws InvalidMembershipId
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
 	 */
 	public function banMember($groupId, $membershipType, $membershipId, GroupBanRequest $request)
 	{
 		$this->assertHasAccessToken();
 		$this->assertIsGroupId($groupId);
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsMembershipId($membershipId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/' . $membershipType . '/' . $membershipId . '/Ban', $request->toArray());
 	}
@@ -390,16 +402,17 @@ class GroupV2 extends Module
 	 * @throws BadRequest
 	 * @throws InvalidGroupId
 	 * @throws InvalidMembershipId
-	 * @throws InvalidMembershipType
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
 	 */
 	public function unbanMember($groupId, $membershipType, $membershipId)
 	{
 		$this->assertHasAccessToken();
 		$this->assertIsGroupId($groupId);
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsMembershipId($membershipId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/' . $membershipType . '/' . $membershipId . '/Unban');
 	}
@@ -423,5 +436,309 @@ class GroupV2 extends Module
 		return $this->apiClient->get('GroupV2/' . $groupId . '/Banned', [
 			'currentpage' => $currentPage
 		]);
+	}
+
+	/**
+	 * @param $groupId
+	 * @param $membershipType
+	 * @param $membershipId
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws InvalidMembershipId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
+	 */
+	public function abdicateFoundership($groupId, $membershipType, $membershipId)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+		$this->assertIsMembershipId($membershipId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+
+		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Admin/AbdicateFoundership/' . $membershipType . '/' . $membershipId);
+	}
+
+	/**
+	 * @param $groupId
+	 * @param $membershipType
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
+	 */
+	public function requestGroupMembership($groupId, $membershipType)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+
+		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/Apply/' . $membershipType);
+	}
+
+	/**
+	 * @param $groupId
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 */
+	public function getPendingMemberships($groupId)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+
+		return $this->apiClient->get('GroupV2/' . $groupId . '/Members/Pending');
+	}
+
+	/**
+	 * @param $groupId
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 */
+	public function getInvitedIndividuals($groupId)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+
+		return $this->apiClient->get('GroupV2/' . $groupId . '/Members/InvitedIndividuals');
+	}
+
+	/**
+	 * @param $groupId
+	 * @param $membershipType
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
+	 */
+	public function rescindGroupMembership($groupId, $membershipType)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+
+		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/Rescind/' . $membershipType);
+	}
+
+	/**
+	 * @param $groupId
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 */
+	public function approveAllPending($groupId)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+
+		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/ApproveAll');
+	}
+
+	/**
+	 * @param $groupId
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 */
+	public function denyAllPending($groupId)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+
+		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/DenyAll');
+	}
+
+	/**
+	 * @param $groupId
+	 * @param GroupApplicationListRequest $request
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 */
+	public function approvePendingForList($groupId, GroupApplicationListRequest $request)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+
+		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/ApproveList', $request->toArray());
+	}
+
+	/**
+	 * @param $groupId
+	 * @param $membershipType
+	 * @param $membershipId
+	 * @param GroupApplicationRequest $request
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws InvalidMembershipId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
+	 */
+	public function approvePending($groupId, $membershipType, $membershipId, GroupApplicationRequest $request)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+		$this->assertIsMembershipId($membershipId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+
+		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/Approve/' . $membershipType . '/' . $membershipId, $request->toArray());
+	}
+
+	/**
+	 * @param $groupId
+	 * @param GroupApplicationListRequest $request
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 */
+	public function denyPendingForList($groupId, GroupApplicationListRequest $request)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+
+		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/DenyList', $request->toArray());
+	}
+
+	/**
+	 * @param $membershipType
+	 * @param $membershipId
+	 * @param $filter
+	 * @param $groupType
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidMembershipId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
+	 */
+	public function getGroupsForMember($membershipType, $membershipId, $filter, $groupType)
+	{
+		$this->assertIsMembershipId($membershipId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+		$this->assertIsEnum($filter, GroupsForMemberFilter::class);
+		$this->assertIsEnum($groupType, GroupType::class);
+
+		return $this->apiClient->get('GroupV2/User/' . $membershipType . '/' . $membershipId . '/' . $filter . '/' . $groupType);
+	}
+
+	/**
+	 * @param $membershipType
+	 * @param $membershipId
+	 * @param $filter
+	 * @param $groupType
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidMembershipId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
+	 */
+	public function getPotentialGroupsForMember($membershipType, $membershipId, $filter, $groupType)
+	{
+		$this->assertIsMembershipId($membershipId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+		$this->assertIsEnum($filter, GroupsForMemberFilter::class);
+		$this->assertIsEnum($groupType, GroupType::class);
+
+		return $this->apiClient->get('GroupV2/User/Potential/' . $membershipType . '/' . $membershipId . '/' . $filter . '/' . $groupType);
+	}
+
+	/**
+	 * @param $groupId
+	 * @param $membershipType
+	 * @param $membershipId
+	 * @param GroupApplicationRequest $request
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws InvalidMembershipId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
+	 */
+	public function individualGroupInvite($groupId, $membershipType, $membershipId, GroupApplicationRequest $request)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+		$this->assertIsMembershipId($membershipId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+
+		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/IndividualInvite/' . $membershipType . '/' . $membershipId, $request->toArray());
+	}
+
+	/**
+	 * @param $groupId
+	 * @param $membershipType
+	 * @param $membershipId
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws InvalidMembershipId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
+	 */
+	public function individualGroupInviteCancel($groupId, $membershipType, $membershipId)
+	{
+		$this->assertHasAccessToken();
+		$this->assertIsGroupId($groupId);
+		$this->assertIsMembershipId($membershipId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+
+		return $this->apiClient->postAsJson('GroupV2/' . $groupId . '/Members/IndividualInviteCancel/' . $membershipType . '/' . $membershipId);
 	}
 }

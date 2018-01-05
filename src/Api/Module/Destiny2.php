@@ -4,23 +4,23 @@ namespace AdamDBurton\Destiny2ApiClient\Api\Module;
 
 use AdamDBurton\Destiny2ApiClient\Api\Module;
 use AdamDBurton\Destiny2ApiClient\Api\Response;
-use AdamDBurton\Destiny2ApiClient\Enum\ActivityType;
-use AdamDBurton\Destiny2ApiClient\Enum\Component;
+use AdamDBurton\Destiny2ApiClient\Enum\DestinyActivityModeType;
+use AdamDBurton\Destiny2ApiClient\Enum\BungieMembershipType;
+use AdamDBurton\Destiny2ApiClient\Enum\DestinyComponentType;
 use AdamDBurton\Destiny2ApiClient\Enum\Period;
 use AdamDBurton\Destiny2ApiClient\Enum\StatsGroup;
 use AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired;
 use AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable;
 use AdamDBurton\Destiny2ApiClient\Exception\BadRequest;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidActivityType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidComponentType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemActivityId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemHash;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidVendorHash;
 use AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound;
 use AdamDBurton\Destiny2ApiClient\Exception\Unauthorized;
@@ -62,13 +62,14 @@ class Destiny2 extends Module
 	 * @return Response
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function searchDestinyPlayer($membershipType, $displayName)
 	{
-		$this->assertIsMembershipType($membershipType);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->get('Destiny2/SearchDestinyPlayer/' . $membershipType . '/' . $displayName);
 	}
@@ -76,23 +77,23 @@ class Destiny2 extends Module
 	/**
 	 * @param $membershipType
 	 * @param $destinyMembershipId
-	 * @param int|int[] $components
+	 * @param $components
 	 * @return Response
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
-	 * @throws InvalidComponentType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws InvalidMembershipId
-	 * @throws InvalidMembershipType
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function getProfile($membershipType, $destinyMembershipId, $components)
 	{
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsMembershipId($destinyMembershipId);
-		$this->assertIsComponentType($components);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+		$this->assertIsEnum($components, DestinyComponentType::class, true);
 
-		$components = implode(',', Component::getEnumStringsFor($components));
+		$components = implode(',', DestinyComponentType::getEnumStringsFor($components));
 
 		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId, [
 			'components' => $components
@@ -103,23 +104,24 @@ class Destiny2 extends Module
 	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $characterId
-	 * @param int|int[] $components
+	 * @param $components
 	 * @return Response
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
 	 * @throws InvalidDestinyMembershipId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function getCharacter($membershipType, $destinyMembershipId, $characterId, $components)
 	{
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
-		$components = implode(',', Component::getEnumStringsFor($components));
+		$components = implode(',', DestinyComponentType::getEnumStringsFor($components));
 
 		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId, [
 			'components' => $components
@@ -150,16 +152,17 @@ class Destiny2 extends Module
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws InvalidItemInstanceId
-	 * @throws InvalidMembershipType
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function getItem($membershipType, $destinyMembershipId, $itemInstanceId)
 	{
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsItemInstanceId($itemInstanceId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Item/' . $itemInstanceId);
 	}
@@ -173,15 +176,16 @@ class Destiny2 extends Module
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
 	 * @throws InvalidDestinyMembershipId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function getVendors($membershipType, $destinyMembershipId, $characterId)
 	{
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors');
 	}
@@ -196,17 +200,18 @@ class Destiny2 extends Module
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
 	 * @throws InvalidDestinyMembershipId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws InvalidVendorHash
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function getVendor($membershipType, $destinyMembershipId, $characterId, $vendorHash)
 	{
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
 		$this->assertIsVendorHash($vendorHash);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors/' . $vendorHash);
 	}
@@ -223,20 +228,20 @@ class Destiny2 extends Module
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws InvalidItemHash
 	 * @throws InvalidItemInstanceId
-	 * @throws InvalidMembershipType
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function transferItem($itemHash, $stackSize, $toVault, $itemInstanceId, $characterId, $membershipType)
 	{
 		$this->assertHasAccessToken();
-
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsCharacterId($characterId);
 		$this->assertIsItemHash($itemHash);
 		$this->assertIsItemInstanceId($itemInstanceId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->postAsJson('Destiny2/Actions/Items/TransferItem', [
 			'itemReferenceHash' => $itemHash,
@@ -257,18 +262,18 @@ class Destiny2 extends Module
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws InvalidItemInstanceId
-	 * @throws InvalidMembershipType
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function equipItem($itemInstanceId, $characterId, $membershipType)
 	{
 		$this->assertHasAccessToken();
-
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsCharacterId($characterId);
 		$this->assertIsItemInstanceId($itemInstanceId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->postAsJson('Destiny2/Actions/Items/EquipItem', [
 			'itemId' => $itemInstanceId,
@@ -286,18 +291,18 @@ class Destiny2 extends Module
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws InvalidItemInstanceId
-	 * @throws InvalidMembershipType
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function equipItems($itemInstanceIds, $characterId, $membershipType)
 	{
 		$this->assertHasAccessToken();
-
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsCharacterId($characterId);
 		$this->assertIsItemInstanceId($itemInstanceIds);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->postAsJson('Destiny2/Actions/Items/EquipItems', [
 			'itemIds' => $itemInstanceIds,
@@ -316,18 +321,18 @@ class Destiny2 extends Module
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws InvalidItemInstanceId
-	 * @throws InvalidMembershipType
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function setItemLockState($state, $itemInstanceId, $characterId, $membershipType)
 	{
 		$this->assertHasAccessToken();
-
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsCharacterId($characterId);
 		$this->assertIsItemInstanceId($itemInstanceId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->postAsJson('Destiny2/Actions/Items/SetLockState', [
 			'state' => $state,
@@ -346,18 +351,18 @@ class Destiny2 extends Module
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws InvalidItemInstanceId
-	 * @throws InvalidMembershipType
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function insertSocketPlug($itemInstanceId, $characterId, $membershipType)
 	{
 		$this->assertHasAccessToken();
-
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsCharacterId($characterId);
 		$this->assertIsItemInstanceId($itemInstanceId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->postAsJson('Destiny2/Actions/Items/InsertSocketPlug', [
 			'itemId' => $itemInstanceId,
@@ -375,18 +380,18 @@ class Destiny2 extends Module
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws InvalidItemInstanceId
-	 * @throws InvalidMembershipType
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
 	public function activateTalentNode($itemInstanceId, $characterId, $membershipType)
 	{
 		$this->assertHasAccessToken();
-
-		$this->assertIsMembershipType($membershipType);
 		$this->assertIsCharacterId($characterId);
 		$this->assertIsItemInstanceId($itemInstanceId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		return $this->apiClient->postAsJson('Destiny2/Actions/Items/ActivateTalentNode', [
 			'itemId' => $itemInstanceId,
@@ -456,29 +461,29 @@ class Destiny2 extends Module
 	}
 
 	/**
-	 * @param $membershipTypeId
+	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $maxPlayers
-	 * @param int|int[]|null $modes
+	 * @param $modes
 	 * @param $statId
 	 * @return Response
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
-	 * @throws InvalidActivityType
 	 * @throws InvalidDestinyMembershipId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
-	public function getLeaderboards($membershipTypeId, $destinyMembershipId, $maxPlayers, $modes, $statId)
+	public function getLeaderboards($membershipType, $destinyMembershipId, $maxPlayers, $modes, $statId)
 	{
-		$this->assertIsMembershipType($membershipTypeId);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
-		$this->assertIsActivityType($modes);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+		$this->assertIsEnum($modes, DestinyActivityModeType::class);
 
-		$modes = implode(',', ActivityType::getEnumStringsFor($modes));
+		$modes = implode(',', DestinyActivityModeType::getEnumStringsFor($modes));
 
-		return $this->apiClient->get('Destiny2/' . $membershipTypeId .'/Account/' . $destinyMembershipId . '/Stats/Leaderboards', [
+		return $this->apiClient->get('Destiny2/' . $membershipType .'/Account/' . $destinyMembershipId . '/Stats/Leaderboards', [
 			'maxtop' => $maxPlayers,
 			'modes' => $modes,
 			'statid' => $statId
@@ -486,32 +491,32 @@ class Destiny2 extends Module
 	}
 
 	/**
-	 * @param $membershipTypeId
+	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $characterId
 	 * @param null $maxPlayers
-	 * @param int|int[]|null $modes
+	 * @param null $modes
 	 * @param null $statId
 	 * @return Response
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
-	 * @throws InvalidActivityType
 	 * @throws InvalidCharacterId
 	 * @throws InvalidDestinyMembershipId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
-	public function getLeaderboardsForCharacter($membershipTypeId, $destinyMembershipId, $characterId, $maxPlayers = null, $modes = null, $statId = null)
+	public function getLeaderboardsForCharacter($membershipType, $destinyMembershipId, $characterId, $maxPlayers = null, $modes = null, $statId = null)
 	{
-		$this->assertIsMembershipType($membershipTypeId);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
-		$this->assertIsActivityType($modes);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
+		$this->assertIsEnum($modes, DestinyActivityModeType::class);
 
-		$modes = $modes ? implode(',', ActivityType::getEnumStringsFor($modes)) : null;
+		$modes = $modes ? implode(',', DestinyActivityModeType::getEnumStringsFor($modes)) : null;
 
-		return $this->apiClient->get('Destiny2/Stats/Leaderboards/' . $membershipTypeId .'/' . $destinyMembershipId . '/' . $characterId, [
+		return $this->apiClient->get('Destiny2/Stats/Leaderboards/' . $membershipType .'/' . $destinyMembershipId . '/' . $characterId, [
 			'maxtop' => $maxPlayers,
 			'modes' => $modes,
 			'statid' => $statId
@@ -536,33 +541,34 @@ class Destiny2 extends Module
 	}
 
 	/**
-	 * @param $membershipTypeId
+	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $characterId
 	 * @param null $dayEnd
 	 * @param null $dayStart
-	 * @param int|int[]|null $groups
-	 * @param int|int[]|null $modes
+	 * @param null $groups
+	 * @param null $modes
 	 * @param null $periodType
 	 * @return Response
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
 	 * @throws InvalidDestinyMembershipId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
-	public function getHistoricalStats($membershipTypeId, $destinyMembershipId, $characterId, $dayEnd = null, $dayStart = null, $groups = null, $modes = null, $periodType = null)
+	public function getHistoricalStats($membershipType, $destinyMembershipId, $characterId, $dayEnd = null, $dayStart = null, $groups = null, $modes = null, $periodType = null)
 	{
-		$this->assertIsMembershipType($membershipTypeId);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
-		$modes = $modes ? implode(',', ActivityType::getEnumStringsFor($modes)) : null;
+		$modes = $modes ? implode(',', DestinyActivityModeType::getEnumStringsFor($modes)) : null;
 		$groups = $groups ? implode(',', StatsGroup::getEnumStringsFor($groups)) : null;
 
-		return $this->apiClient->get('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats', [
+		return $this->apiClient->get('Destiny2/' . $membershipType . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats', [
 			'dayend' => $dayEnd,
 			'daystart' => $dayStart,
 			'groups' => $groups,
@@ -572,31 +578,32 @@ class Destiny2 extends Module
 	}
 
 	/**
-	 * @param $membershipTypeId
+	 * @param $membershipType
 	 * @param $destinyMembershipId
-	 * @param int|int[]|null $groups
+	 * @param null $groups
 	 * @return Response
 	 * @throws ApiUnavailable
 	 * @throws BadRequest
 	 * @throws InvalidDestinyMembershipId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
-	public function getHistoricalStatsForAccount($membershipTypeId, $destinyMembershipId, $groups = null)
+	public function getHistoricalStatsForAccount($membershipType, $destinyMembershipId, $groups = null)
 	{
-		$this->assertIsMembershipType($membershipTypeId);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
 		$groups = $groups ? implode(',', StatsGroup::getEnumStringsFor($groups)) : null;
 
-		return $this->apiClient->get('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Stats', [
+		return $this->apiClient->get('Destiny2/' . $membershipType . '/Account/' . $destinyMembershipId . '/Stats', [
 			'groups' => $groups
 		]);
 	}
 
 	/**
-	 * @param $membershipTypeId
+	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $characterId
 	 * @param null $count
@@ -607,17 +614,18 @@ class Destiny2 extends Module
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
 	 * @throws InvalidDestinyMembershipId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
-	public function getActivityHistory($membershipTypeId, $destinyMembershipId, $characterId, $count = null, $mode = null, $page = 0)
+	public function getActivityHistory($membershipType, $destinyMembershipId, $characterId, $count = null, $mode = null, $page = 0)
 	{
-		$this->assertIsMembershipType($membershipTypeId);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
-		return $this->apiClient->get('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/Activities', [
+		return $this->apiClient->get('Destiny2/' . $membershipType . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/Activities', [
 			'count' => $count,
 			'mode' => $mode,
 			'page' => $page
@@ -625,7 +633,7 @@ class Destiny2 extends Module
 	}
 
 	/**
-	 * @param $membershipTypeId
+	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $characterId
 	 * @return Response
@@ -633,21 +641,22 @@ class Destiny2 extends Module
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
 	 * @throws InvalidDestinyMembershipId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
-	public function getUniqueWeaponHistory($membershipTypeId, $destinyMembershipId, $characterId)
+	public function getUniqueWeaponHistory($membershipType, $destinyMembershipId, $characterId)
 	{
-		$this->assertIsMembershipType($membershipTypeId);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
-		return $this->apiClient->get('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/UniqueWeapons');
+		return $this->apiClient->get('Destiny2/' . $membershipType . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/UniqueWeapons');
 	}
 
 	/**
-	 * @param $membershipTypeId
+	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $characterId
 	 * @return Response
@@ -655,17 +664,18 @@ class Destiny2 extends Module
 	 * @throws BadRequest
 	 * @throws InvalidCharacterId
 	 * @throws InvalidDestinyMembershipId
-	 * @throws InvalidMembershipType
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
-	public function getDestinyAggregateActivityStats($membershipTypeId, $destinyMembershipId, $characterId)
+	public function getDestinyAggregateActivityStats($membershipType, $destinyMembershipId, $characterId)
 	{
-		$this->assertIsMembershipType($membershipTypeId);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
+		$this->assertIsEnum($membershipType, BungieMembershipType::class);
 
-		return $this->apiClient->get('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/AggregateActivityStats');
+		return $this->apiClient->get('Destiny2/' . $membershipType . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/AggregateActivityStats');
 	}
 
 	/**

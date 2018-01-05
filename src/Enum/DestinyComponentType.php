@@ -3,11 +3,11 @@
 namespace AdamDBurton\Destiny2ApiClient\Enum;
 
 /**
- * Class Component
+ * Class DestinyComponentType
  * @package AdamDBurton\Destiny2ApiClient\Enum
  * @see https://bungie-net.github.io/multi/schema_Destiny-DestinyComponentType.html
  */
-class Component extends Enum
+class DestinyComponentType extends Enum
 {
 	const None = 0;
 	const Profiles = 100;

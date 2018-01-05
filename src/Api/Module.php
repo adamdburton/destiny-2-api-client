@@ -2,7 +2,8 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Api;
 
-use AdamDBurton\Destiny2ApiClient\Enum\Component;
+use AdamDBurton\Destiny2ApiClient\Enum\DestinyComponentType;
+use AdamDBurton\Destiny2ApiClient\Enum\Enum;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumPostSort;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicCategoryFilter;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicQuickDate;
@@ -16,10 +17,13 @@ use AdamDBurton\Destiny2ApiClient\Exception\InvalidBoolean;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidComponentType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumPostSort;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicCategoryFilter;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicQuickDate;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicSort;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupConversationId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupDateRange;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupType;
@@ -99,6 +103,52 @@ abstract class Module
 	}
 
 	/**
+	 * @param $value
+	 * @param $enumClass
+	 * @param bool $allowArray
+	 * @throws InvalidEnum
+	 * @throws InvalidEnumArray
+	 */
+	public function assertIsEnum($value, $enumClass, $allowArray = false)
+	{
+		$validEnum = !$enumClass::hasEnum($value);
+
+		if($allowArray && !is_array($value) && $validEnum)
+		{
+			throw new InvalidEnum($value, $enumClass);
+		}
+		elseif($allowArray && is_array($value))
+		{
+			foreach($value as $item)
+			{
+				if(!$enumClass::hasEnum($item))
+				{
+					throw new InvalidEnumArray($value, $enumClass);
+				}
+			}
+		}
+		elseif(!$validEnum)
+		{
+			throw new InvalidEnum($value, $enumClass);
+		}
+	}
+
+	/**
+	 * @param $value
+	 * @param $enumClass
+	 * @throws InvalidEnumArray
+	 */
+	public function assertIsEnumArray($value, $enumClass)
+	{
+		if(!is_array($value))
+		{
+			throw new InvalidEnumArray($value, $enumClass);
+		}
+
+
+	}
+
+	/**
 	 * @param $membershipId
 	 * @throws InvalidMembershipId
 	 */
@@ -143,6 +193,18 @@ abstract class Module
 		if(!strlen(decbin(~$groupId)) == 64)
 		{
 			throw new InvalidGroupId($groupId);
+		}
+	}
+
+	/**
+	 * @param $conversationId
+	 * @throws InvalidGroupConversationId
+	 */
+	protected function assertIsGroupConversationId($conversationId)
+	{
+		if(!strlen(decbin(~$conversationId)) == 64)
+		{
+			throw new InvalidGroupConversationId($conversationId);
 		}
 	}
 
@@ -210,128 +272,6 @@ abstract class Module
 		if(!strlen(decbin(~$milestoneHash)) == 32)
 		{
 			throw new InvalidMilestoneHash($milestoneHash);
-		}
-	}
-
-	/**
-	 * @param $membershipType
-	 * @throws InvalidMembershipType
-	 */
-	protected function assertIsMembershipType($membershipType)
-	{
-		if(!Membership::hasEnum($membershipType))
-		{
-			throw new InvalidMembershipType($membershipType);
-		}
-	}
-
-	/**
-	 * @param $activityType
-	 * @throws InvalidActivityType
-	 */
-	protected function assertIsActivityType($activityType)
-	{
-		if(is_array($activityType))
-		{
-			array_map([ $this, __METHOD__ ], $activityType);
-		}
-		else
-		{
-			if(!Membership::hasEnum($activityType))
-			{
-				throw new InvalidActivityType($activityType);
-			}
-		}
-	}
-
-	/**
-	 * @param $componentType
-	 * @throws InvalidComponentType
-	 */
-	protected function assertIsComponentType($componentType)
-	{
-		if(is_array($componentType))
-		{
-			array_map([ $this, __METHOD__ ], $componentType);
-		}
-		else
-		{
-			if(!Component::hasEnum($componentType))
-			{
-				throw new InvalidComponentType($componentType);
-			}
-		}
-	}
-
-	/**
-	 * @param $quickDate
-	 * @throws InvalidForumTopicQuickDate
-	 */
-	protected function assertIsForumTopicQuickDate($quickDate)
-	{
-		if(!ForumTopicQuickDate::hasEnum($quickDate))
-		{
-			throw new InvalidForumTopicQuickDate($quickDate);
-		}
-	}
-
-	/**
-	 * @param $category
-	 * @throws InvalidForumTopicCategoryFilter
-	 */
-	protected function assertIsForumTopicCategoryFilter($category)
-	{
-		if(!ForumTopicCategoryFilter::hasEnum($category))
-		{
-			throw new InvalidForumTopicCategoryFilter($category);
-		}
-	}
-
-	/**
-	 * @param $sort
-	 * @throws InvalidForumTopicSort
-	 */
-	protected function assertIsForumTopicSort($sort)
-	{
-		if(!ForumTopicSort::hasEnum($sort))
-		{
-			throw new InvalidForumTopicSort($sort);
-		}
-	}
-
-	/**
-	 * @param $sort
-	 * @throws InvalidForumPostSort
-	 */
-	protected function assertIsForumPostSort($sort)
-	{
-		if(!ForumPostSort::hasEnum($sort))
-		{
-			throw new InvalidForumPostSort($sort);
-		}
-	}
-
-	/**
-	 * @param $groupType
-	 * @throws InvalidGroupType
-	 */
-	protected function assertIsGroupType($groupType)
-	{
-		if(!GroupType::hasEnum($groupType))
-		{
-			throw new InvalidGroupType($groupType);
-		}
-	}
-
-	/**
-	 * @param $dateRange
-	 * @throws InvalidGroupDateRange
-	 */
-	protected function assertIsGroupDateRange($dateRange)
-	{
-		if(!GroupDateRange::hasEnum($groupType))
-		{
-			throw new InvalidGroupDateRange($groupType);
 		}
 	}
 
