@@ -2,6 +2,7 @@
 
 use AdamDBurton\Destiny2ApiClient\Api;
 use AdamDBurton\Destiny2ApiClient\Api\Module\User;
+use AdamDBurton\Destiny2ApiClient\Struct\GroupApplicationRequest;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -38,5 +39,12 @@ final class UserModuleTest extends TestCase
 		$actual = api([ new Response(200, [ 'test' => '123' ], json_encode([ 'this is' => 'a test' ])) ])->user()->getBungieNetUserById(self::$membershipId);
 
 		$this->assertEquals($expected, $actual->getResponse());
+	}
+
+	public function ewfewf()
+	{
+		$groupApplicationRequest = new GroupApplicationRequest([
+			'message' => 123
+		]);
 	}
 }

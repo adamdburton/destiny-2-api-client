@@ -15,25 +15,23 @@ class Forum extends Module
 	 * @param $pageSize
 	 * @param $group
 	 * @param $sort
-	 * @param ForumTopicQuickDate $quickDate
-	 * @param ForumTopicCategoryFilter $categoryFilter
+	 * @param $quickDate
+	 * @param $categoryFilter
 	 * @param string $locales
 	 * @param string $tagString
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicCategoryFilter
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicQuickDate
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicSort
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
-	 * @internal param $membershipId
 	 */
 	public function getTopicsPaged($page, $pageSize, $group, $sort, $quickDate, $categoryFilter, $locales = 'en', $tagString = '')
 	{
-		$this->assertIsForumTopicSort($sort);
-		$this->assertIsForumTopicQuickDate($quickDate);
-		$this->assertIsForumTopicCategoryFilter($categoryFilter);
+		$this->assertIsEnum($sort, ForumTopicSort::class);
+		$this->assertIsEnum($quickDate, ForumTopicQuickDate::class);
+		$this->assertIsEnum($categoryFilter, ForumTopicCategoryFilter::class);
 
 		$sort = implode(',', ForumTopicSort::getEnumStringFor($sort));
 		$quickDate = implode(',', ForumTopicQuickDate::getEnumStringFor($quickDate));
@@ -47,24 +45,23 @@ class Forum extends Module
 
 	/**
 	 * @param $page
-	 * @param ForumTopicSort $sort
-	 * @param ForumTopicQuickDate $quickDate
-	 * @param ForumTopicCategoryFilter $categoryFilter
+	 * @param $sort
+	 * @param $quickDate
+	 * @param $categoryFilter
 	 * @param string $locales
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicCategoryFilter
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicQuickDate
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicSort
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
 	public function getCoreTopicsPaged($page, $sort, $quickDate, $categoryFilter, $locales = 'en')
 	{
-		$this->assertIsForumTopicSort($sort);
-		$this->assertIsForumTopicQuickDate($quickDate);
-		$this->assertIsForumTopicCategoryFilter($categoryFilter);
+		$this->assertIsEnum($sort, ForumTopicSort::class);
+		$this->assertIsEnum($quickDate, ForumTopicQuickDate::class);
+		$this->assertIsEnum($categoryFilter, ForumTopicCategoryFilter::class);
 
 		$sort = implode(',', ForumTopicSort::getEnumStringFor($sort));
 		$quickDate = implode(',', ForumTopicQuickDate::getEnumStringFor($quickDate));
@@ -82,18 +79,19 @@ class Forum extends Module
 	 * @param $replySize
 	 * @param $getParentPost
 	 * @param $rootThreadMode
-	 * @param ForumPostSort $sortMode
+	 * @param $sortMode
 	 * @param bool $showBanned
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidForumPostSort
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
 	public function GetPostsThreadedPaged($parentPostId, $page, $pageSize, $replySize, $getParentPost, $rootThreadMode, $sortMode, $showBanned = false)
 	{
-		$this->assertIsForumPostSort($sortMode);
+		$this->assertIsEnum($sortMode, ForumPostSort::class);
 
 		$sortMode = implode(',', ForumPostSort::getEnumStringFor($sortMode));
 		$showBanned = $showBanned ? 'true' : '';
@@ -102,6 +100,4 @@ class Forum extends Module
 			'showbanned' => $showBanned
 		]);
 	}
-
-	public function
 }

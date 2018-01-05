@@ -2,36 +2,19 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Api;
 
-use AdamDBurton\Destiny2ApiClient\Enum\DestinyComponentType;
-use AdamDBurton\Destiny2ApiClient\Enum\Enum;
-use AdamDBurton\Destiny2ApiClient\Enum\ForumPostSort;
-use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicCategoryFilter;
-use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicQuickDate;
-use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicSort;
-use AdamDBurton\Destiny2ApiClient\Enum\GroupDateRange;
-use AdamDBurton\Destiny2ApiClient\Enum\GroupType;
-use AdamDBurton\Destiny2ApiClient\Enum\Membership;
 use AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidActivityType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidBoolean;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidComponentType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidEnum;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidEnumArray;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumPostSort;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicCategoryFilter;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicQuickDate;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicSort;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupConversationId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupDateRange;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupType;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidInteger;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemActivityId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemHash;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidMilestoneHash;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidString;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidVendorHash;
@@ -99,6 +82,18 @@ abstract class Module
 		if(!is_bool($boolean))
 		{
 			throw new InvalidBoolean($boolean);
+		}
+	}
+
+	/**
+	 * @param $int
+	 * @throws InvalidInteger
+	 */
+	public function assertIsInt($int)
+	{
+		if(!is_int($int) || (is_int($int) && $int < 0))
+		{
+			throw new InvalidInteger($int);
 		}
 	}
 
