@@ -3,6 +3,11 @@
 namespace AdamDBurton\Destiny2ApiClient\Api\Module;
 
 use AdamDBurton\Destiny2ApiClient\Api\Module;
+use AdamDBurton\Destiny2ApiClient\Api\Response;
+use AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable;
+use AdamDBurton\Destiny2ApiClient\Exception\BadRequest;
+use AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound;
+use AdamDBurton\Destiny2ApiClient\Exception\Unauthorized;
 
 class App extends Module
 {
@@ -19,11 +24,11 @@ class App extends Module
 	 * @param $authCode
 	 * @param $oAuthClientId
 	 * @param $oAuthClientSecret
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getAccessTokenFromAuthCode($authCode, $oAuthClientId, $oAuthClientSecret)
 	{
@@ -36,11 +41,11 @@ class App extends Module
 	 * @param $refreshToken
 	 * @param $oAuthClientId
 	 * @param $oAuthClientSecret
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getAccessTokenFromRefreshToken($refreshToken, $oAuthClientId, $oAuthClientSecret)
 	{

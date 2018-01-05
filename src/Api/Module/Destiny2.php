@@ -3,19 +3,36 @@
 namespace AdamDBurton\Destiny2ApiClient\Api\Module;
 
 use AdamDBurton\Destiny2ApiClient\Api\Module;
+use AdamDBurton\Destiny2ApiClient\Api\Response;
 use AdamDBurton\Destiny2ApiClient\Enum\ActivityType;
 use AdamDBurton\Destiny2ApiClient\Enum\Component;
 use AdamDBurton\Destiny2ApiClient\Enum\Period;
 use AdamDBurton\Destiny2ApiClient\Enum\StatsGroup;
+use AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired;
+use AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable;
+use AdamDBurton\Destiny2ApiClient\Exception\BadRequest;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidActivityType;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidComponentType;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemActivityId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemHash;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType;
+use AdamDBurton\Destiny2ApiClient\Exception\InvalidVendorHash;
+use AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound;
+use AdamDBurton\Destiny2ApiClient\Exception\Unauthorized;
 
 class Destiny2 extends Module
 {
 	/**
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getDestinyManifest()
 	{
@@ -25,12 +42,12 @@ class Destiny2 extends Module
 	/**
 	 * @param $entityType
 	 * @param $itemHash
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidItemHash
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidItemHash
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getDestinyEntityDefinition($entityType, $itemHash)
 	{
@@ -42,12 +59,12 @@ class Destiny2 extends Module
 	/**
 	 * @param $membershipType
 	 * @param $displayName
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function searchDestinyPlayer($membershipType, $displayName)
 	{
@@ -60,14 +77,14 @@ class Destiny2 extends Module
 	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param int|int[] $components
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidComponentType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidComponentType
+	 * @throws InvalidMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getProfile($membershipType, $destinyMembershipId, $components)
 	{
@@ -87,14 +104,14 @@ class Destiny2 extends Module
 	 * @param $destinyMembershipId
 	 * @param $characterId
 	 * @param int|int[] $components
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getCharacter($membershipType, $destinyMembershipId, $characterId, $components)
 	{
@@ -111,12 +128,12 @@ class Destiny2 extends Module
 
 	/**
 	 * @param $groupId
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getClanWeeklyRewardState($groupId)
 	{
@@ -129,14 +146,14 @@ class Destiny2 extends Module
 	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $itemInstanceId
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidItemInstanceId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getItem($membershipType, $destinyMembershipId, $itemInstanceId)
 	{
@@ -151,14 +168,14 @@ class Destiny2 extends Module
 	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $characterId
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getVendors($membershipType, $destinyMembershipId, $characterId)
 	{
@@ -174,15 +191,15 @@ class Destiny2 extends Module
 	 * @param $destinyMembershipId
 	 * @param $characterId
 	 * @param $vendorHash
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidVendorHash
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws InvalidVendorHash
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getVendor($membershipType, $destinyMembershipId, $characterId, $vendorHash)
 	{
@@ -201,16 +218,16 @@ class Destiny2 extends Module
 	 * @param $itemInstanceId
 	 * @param $characterId
 	 * @param $membershipType
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidItemHash
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidItemHash
+	 * @throws InvalidItemInstanceId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function transferItem($itemHash, $stackSize, $toVault, $itemInstanceId, $characterId, $membershipType)
 	{
@@ -235,15 +252,15 @@ class Destiny2 extends Module
 	 * @param $itemInstanceId
 	 * @param $characterId
 	 * @param $membershipType
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidItemInstanceId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function equipItem($itemInstanceId, $characterId, $membershipType)
 	{
@@ -264,15 +281,15 @@ class Destiny2 extends Module
 	 * @param $itemInstanceIds
 	 * @param $characterId
 	 * @param $membershipType
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidItemInstanceId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function equipItems($itemInstanceIds, $characterId, $membershipType)
 	{
@@ -294,15 +311,15 @@ class Destiny2 extends Module
 	 * @param $itemInstanceId
 	 * @param $characterId
 	 * @param $membershipType
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidItemInstanceId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function setItemLockState($state, $itemInstanceId, $characterId, $membershipType)
 	{
@@ -324,15 +341,15 @@ class Destiny2 extends Module
 	 * @param $itemInstanceId
 	 * @param $characterId
 	 * @param $membershipType
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidItemInstanceId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function insertSocketPlug($itemInstanceId, $characterId, $membershipType)
 	{
@@ -353,15 +370,15 @@ class Destiny2 extends Module
 	 * @param $itemInstanceId
 	 * @param $characterId
 	 * @param $membershipType
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws AccessTokenRequired
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidItemInstanceId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function activateTalentNode($itemInstanceId, $characterId, $membershipType)
 	{
@@ -380,12 +397,12 @@ class Destiny2 extends Module
 
 	/**
 	 * @param $activityId
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidItemActivityId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidItemActivityId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getPostGameCarnageReport($activityId)
 	{
@@ -395,11 +412,11 @@ class Destiny2 extends Module
 	}
 
 	/**
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getHistoricalStatsDefinition()
 	{
@@ -408,12 +425,12 @@ class Destiny2 extends Module
 
 	/**
 	 * @param $groupId
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getClanLeaderboards($groupId)
 	{
@@ -424,12 +441,12 @@ class Destiny2 extends Module
 
 	/**
 	 * @param $groupId
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidGroupId
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getClanAggregateStats($groupId)
 	{
@@ -444,14 +461,14 @@ class Destiny2 extends Module
 	 * @param $maxPlayers
 	 * @param int|int[]|null $modes
 	 * @param $statId
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidActivityType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidActivityType
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getLeaderboards($membershipTypeId, $destinyMembershipId, $maxPlayers, $modes, $statId)
 	{
@@ -475,15 +492,15 @@ class Destiny2 extends Module
 	 * @param null $maxPlayers
 	 * @param int|int[]|null $modes
 	 * @param null $statId
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidActivityType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidActivityType
+	 * @throws InvalidCharacterId
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getLeaderboardsForCharacter($membershipTypeId, $destinyMembershipId, $characterId, $maxPlayers = null, $modes = null, $statId = null)
 	{
@@ -505,11 +522,11 @@ class Destiny2 extends Module
 	 * @param $entityType
 	 * @param $searchTerm
 	 * @param int $page
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function searchDestinyEntities($entityType, $searchTerm, $page = 0)
 	{
@@ -527,14 +544,14 @@ class Destiny2 extends Module
 	 * @param int|int[]|null $groups
 	 * @param int|int[]|null $modes
 	 * @param null $periodType
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getHistoricalStats($membershipTypeId, $destinyMembershipId, $characterId, $dayEnd = null, $dayStart = null, $groups = null, $modes = null, $periodType = null)
 	{
@@ -558,13 +575,13 @@ class Destiny2 extends Module
 	 * @param $membershipTypeId
 	 * @param $destinyMembershipId
 	 * @param int|int[]|null $groups
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getHistoricalStatsForAccount($membershipTypeId, $destinyMembershipId, $groups = null)
 	{
@@ -585,14 +602,14 @@ class Destiny2 extends Module
 	 * @param null $count
 	 * @param null $mode
 	 * @param int $page
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getActivityHistory($membershipTypeId, $destinyMembershipId, $characterId, $count = null, $mode = null, $page = 0)
 	{
@@ -611,14 +628,14 @@ class Destiny2 extends Module
 	 * @param $membershipTypeId
 	 * @param $destinyMembershipId
 	 * @param $characterId
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getUniqueWeaponHistory($membershipTypeId, $destinyMembershipId, $characterId)
 	{
@@ -633,14 +650,14 @@ class Destiny2 extends Module
 	 * @param $membershipTypeId
 	 * @param $destinyMembershipId
 	 * @param $characterId
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws InvalidCharacterId
+	 * @throws InvalidDestinyMembershipId
+	 * @throws InvalidMembershipType
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getDestinyAggregateActivityStats($membershipTypeId, $destinyMembershipId, $characterId)
 	{
@@ -653,12 +670,12 @@ class Destiny2 extends Module
 
 	/**
 	 * @param $milestoneHash
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\InvalidMilestoneHash
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getPublicMilestoneContent($milestoneHash)
 	{
@@ -668,11 +685,11 @@ class Destiny2 extends Module
 	}
 
 	/**
-	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
-	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 * @return Response
+	 * @throws ApiUnavailable
+	 * @throws BadRequest
+	 * @throws ResourceNotFound
+	 * @throws Unauthorized
 	 */
 	public function getPublicMilestones()
 	{

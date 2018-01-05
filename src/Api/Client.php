@@ -124,7 +124,7 @@ class Client
 	 * @throws ResourceNotFound
 	 * @throws Unauthorized
 	 */
-	public function postAsJson($endpoint, $data, $headers = [])
+	public function postAsJson($endpoint, $data = [], $headers = [])
 	{
 		return $this->request('POST', $endpoint, [
 			'body' => json_encode($data),
