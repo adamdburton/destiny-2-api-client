@@ -6,6 +6,8 @@ class InvalidEnum extends Destiny2ApiException
 {
 	public function __construct($value, $enumClass)
 	{
-		parent::__construct(sprintf('%s is not an valid %s enum.', $value, $enumClass));
+		$class = substr(strrchr($enumClass, "\\"), 1);
+
+		parent::__construct(sprintf('%s is not a valid %s enum.', $value, $class));
 	}
 }
