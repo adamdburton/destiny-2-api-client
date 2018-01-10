@@ -27,10 +27,9 @@ class Client
 	 * @param null $apiKey
 	 * @param null $client
 	 * @param string $apiRoot
-	 * @param bool $debug
 	 * @throws InvalidApiKey
 	 */
-	public function __construct($apiKey = null, $client = null, $apiRoot = null, $debug = false)
+	public function __construct($apiKey = null, $client = null, $apiRoot = null)
 	{
 		$this->assertIsValidApiKey($apiKey);
 
@@ -44,11 +43,19 @@ class Client
 			$client = new GuzzleClient();
 		}
 
-		$this->debug = (bool) $debug;
-
 		$this->apiKey = $apiKey;
 		$this->apiRoot = $apiRoot;
 		$this->client = $client;
+	}
+
+	public function enableDebug()
+	{
+		$this->debug = true;
+	}
+
+	public function disableDebug()
+	{
+		$this->debug = false;
 	}
 
 	/**

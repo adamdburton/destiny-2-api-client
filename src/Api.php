@@ -31,6 +31,16 @@ class Api
 		$this->apiClient = new Client($apiKey, $client = null, $apiRoot = null);
 	}
 
+	public function enableDebug()
+	{
+		$this->apiClient->enableDebug();
+	}
+
+	public function disableDebug()
+	{
+		$this->apiClient->disableDebug();
+	}
+
 	/**
 	 * @param $name
 	 * @param $arguments
