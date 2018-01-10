@@ -16,6 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 class Client
 {
 	private $client;
+	private $debug = false;
 
 	protected $apiRoot;
 	protected $apiKey;
@@ -26,9 +27,10 @@ class Client
 	 * @param null $apiKey
 	 * @param null $client
 	 * @param string $apiRoot
+	 * @param bool $debug
 	 * @throws InvalidApiKey
 	 */
-	public function __construct($apiKey = null, $client = null, $apiRoot = null)
+	public function __construct($apiKey = null, $client = null, $apiRoot = null, $debug = false)
 	{
 		$this->assertIsValidApiKey($apiKey);
 
@@ -41,6 +43,8 @@ class Client
 		{
 			$client = new GuzzleClient();
 		}
+
+		$this->debug = (bool) $debug;
 
 		$this->apiKey = $apiKey;
 		$this->apiRoot = $apiRoot;
@@ -149,7 +153,7 @@ class Client
 		try
 		{
 			return $this->processResponse(
-				$this->client->request($method, $this->endpoint($endpoint), $options)
+				$this->client->request($method, $this->endpoint($endpoint), array_merge([ 'debug' => $this->debug ], $options))
 			);
 		}
 		catch(ClientException $e)
