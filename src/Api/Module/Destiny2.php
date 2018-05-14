@@ -129,6 +129,7 @@ class Destiny2 extends Module
 	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $itemInstanceId
+     * @param int|int[] $components
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
@@ -138,19 +139,25 @@ class Destiny2 extends Module
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
-	public function getItem($membershipType, $destinyMembershipId, $itemInstanceId)
+	public function getItem($membershipType, $destinyMembershipId, $itemInstanceId, $components)
 	{
 		$this->assertIsMembershipType($membershipType);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsItemInstanceId($itemInstanceId);
+        $this->assertIsComponentType($components);
 
-		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Item/' . $itemInstanceId);
+        $components = implode(',', Component::getEnumStringsFor($components));
+
+		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Item/' . $itemInstanceId, [
+            'components' => $components
+        ]);
 	}
 
 	/**
 	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $characterId
+     * @param int|int[] $components
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
@@ -160,13 +167,18 @@ class Destiny2 extends Module
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
-	public function getVendors($membershipType, $destinyMembershipId, $characterId)
+	public function getVendors($membershipType, $destinyMembershipId, $characterId, $components)
 	{
 		$this->assertIsMembershipType($membershipType);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
+        $this->assertIsComponentType($components);
 
-		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors');
+        $components = implode(',', Component::getEnumStringsFor($components));
+
+		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors', [
+            'components' => $components
+        ]);
 	}
 
 	/**
@@ -174,6 +186,7 @@ class Destiny2 extends Module
 	 * @param $destinyMembershipId
 	 * @param $characterId
 	 * @param $vendorHash
+     * @param int|int[] $components
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
@@ -184,14 +197,19 @@ class Destiny2 extends Module
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
-	public function getVendor($membershipType, $destinyMembershipId, $characterId, $vendorHash)
+	public function getVendor($membershipType, $destinyMembershipId, $characterId, $vendorHash, $components)
 	{
 		$this->assertIsMembershipType($membershipType);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
 		$this->assertIsVendorHash($vendorHash);
+        $this->assertIsComponentType($components);
 
-		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors/' . $vendorHash);
+        $components = implode(',', Component::getEnumStringsFor($components));
+
+		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors/' . $vendorHash, [
+            'components' => $components
+        ]);
 	}
 
 	/**
