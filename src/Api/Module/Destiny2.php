@@ -129,7 +129,7 @@ class Destiny2 extends Module
 	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $itemInstanceId
-     * @param int|int[] $components
+	 * @param int|int[] $components
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
@@ -144,20 +144,19 @@ class Destiny2 extends Module
 		$this->assertIsMembershipType($membershipType);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsItemInstanceId($itemInstanceId);
-        $this->assertIsComponentType($components);
-
-        $components = implode(',', Component::getEnumStringsFor($components));
+		$this->assertIsComponentType($components);
+		$components = implode(',', Component::getEnumStringsFor($components));
 
 		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Item/' . $itemInstanceId, [
-            'components' => $components
-        ]);
+			'components' => $components
+		]);
 	}
 
 	/**
 	 * @param $membershipType
 	 * @param $destinyMembershipId
 	 * @param $characterId
-     * @param int|int[] $components
+	 * @param int|int[] $components
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
@@ -172,13 +171,13 @@ class Destiny2 extends Module
 		$this->assertIsMembershipType($membershipType);
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
-        $this->assertIsComponentType($components);
-
-        $components = implode(',', Component::getEnumStringsFor($components));
+		$this->assertIsComponentType($components);
+		
+		$components = implode(',', Component::getEnumStringsFor($components));
 
 		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors', [
-            'components' => $components
-        ]);
+			'components' => $components
+        	]);
 	}
 
 	/**
@@ -186,7 +185,7 @@ class Destiny2 extends Module
 	 * @param $destinyMembershipId
 	 * @param $characterId
 	 * @param $vendorHash
-     * @param int|int[] $components
+	 * @param int|int[] $components
 	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
@@ -203,13 +202,13 @@ class Destiny2 extends Module
 		$this->assertIsDestinyMembershipId($destinyMembershipId);
 		$this->assertIsCharacterId($characterId);
 		$this->assertIsVendorHash($vendorHash);
-        $this->assertIsComponentType($components);
-
-        $components = implode(',', Component::getEnumStringsFor($components));
+		$this->assertIsComponentType($components);
+		
+		$components = implode(',', Component::getEnumStringsFor($components));
 
 		return $this->apiClient->get('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors/' . $vendorHash, [
-            'components' => $components
-        ]);
+			'components' => $components
+		]);
 	}
 
 	/**
