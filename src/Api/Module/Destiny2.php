@@ -17,6 +17,18 @@ class Destiny2 extends Module
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
 	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
 	 */
+	public function getGlobalAlerts() {
+		return $this->apiClient->get('/GlobalAlerts/');
+	}
+	
+	
+	/**
+	 * @return \AdamDBurton\Destiny2ApiClient\Api\Response
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\BadRequest
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound
+	 * @throws \AdamDBurton\Destiny2ApiClient\Exception\Unauthorized
+	 */
 	public function getDestinyManifest()
 	{
 		return $this->apiClient->get('Destiny2/Manifest');
