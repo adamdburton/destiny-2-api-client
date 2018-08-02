@@ -36,7 +36,7 @@ class Response
 	 */
 	public function isSuccess()
 	{
-		return $this->getResponse()->ErrorStatus == 'Success';
+		return $this->getResponse()->getStatusCode() === 200;
 	}
 
 	/**

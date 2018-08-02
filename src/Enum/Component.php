@@ -33,4 +33,5 @@ class Component extends Enum
 	const VendorCategories = 401;
 	const VendorSales = 402;
 	const Kiosks = 500;
+	const CurrencyLookups = 600;
 }
