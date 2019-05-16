@@ -2,8 +2,10 @@
 
 use AdamDBurton\Destiny2ApiClient\Api\Client;
 use AdamDBurton\Destiny2ApiClient\Exception\ApiUnavailable;
+use AdamDBurton\Destiny2ApiClient\Exception\BadRequest;
 use AdamDBurton\Destiny2ApiClient\Exception\InvalidApiKey;
 use AdamDBurton\Destiny2ApiClient\Exception\ResourceNotFound;
+use AdamDBurton\Destiny2ApiClient\Exception\Unauthorized;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
@@ -31,21 +33,34 @@ final class ClientTest extends TestCase
 		]);
 	}
 
-	public function testClient()
+    /**
+     * @throws InvalidApiKey
+     */
+    public function testClient()
 	{
 		$client = new Client(self::$validApiKey, self::$guzzleClient);
 
 		$this->assertInstanceOf(Client::class, $client);
 	}
 
-	public function testInvalidApiKey()
+    /**
+     * @throws InvalidApiKey
+     */
+    public function testInvalidApiKey()
 	{
 		$this->expectException(InvalidApiKey::class);
 
 		new Client(self::$invalidApiKey, self::$guzzleClient);
 	}
 
-	public function testBadApiBase()
+    /**
+     * @throws ApiUnavailable
+     * @throws InvalidApiKey
+     * @throws ResourceNotFound
+     * @throws BadRequest
+     * @throws Unauthorized
+     */
+    public function testBadApiBase()
 	{
 		$client = new Client(self::$validApiKey, self::$guzzleClient, 'https://invalid.domain/api');
 
@@ -54,7 +69,14 @@ final class ClientTest extends TestCase
 		$client->get('');
 	}
 
-	public function testEmptyGetThrowsResourceNotFound()
+    /**
+     * @throws ApiUnavailable
+     * @throws InvalidApiKey
+     * @throws ResourceNotFound
+     * @throws BadRequest
+     * @throws Unauthorized
+     */
+    public function testEmptyGetThrowsResourceNotFound()
 	{
 		$client = new Client(self::$validApiKey, self::$guzzleClient);
 

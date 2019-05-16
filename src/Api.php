@@ -2,67 +2,114 @@
 
 namespace AdamDBurton\Destiny2ApiClient;
 
-use AdamDBurton\Destiny2ApiClient\Api\Client;
-use AdamDBurton\Destiny2ApiClient\Api\Module\App;
-use AdamDBurton\Destiny2ApiClient\Api\Module\Destiny2;
-use AdamDBurton\Destiny2ApiClient\Api\Module\User;
-use AdamDBurton\Destiny2ApiClient\Exception\ModuleNotImplemented;
+use AdamDBurton\Destiny2ApiClient\Module\App;
+use AdamDBurton\Destiny2ApiClient\Module\Auth;
+use AdamDBurton\Destiny2ApiClient\Module\Destiny2;
+use AdamDBurton\Destiny2ApiClient\Module\Forum;
+use AdamDBurton\Destiny2ApiClient\Module\Manifest;
+use AdamDBurton\Destiny2ApiClient\Module\User;
+use Http\Client\HttpClient;
+use Http\Discovery\HttpClientDiscovery;
 
 /**
  * Class Api
  * @package AdamDBurton\Destiny2ApiClient
- * @method App app()
- * @method Destiny2 destiny2()
- * @method User user()
  */
 class Api
 {
-	private $apiClient;
-	private $modules = [];
+    /** @var Client */
+	protected $client;
 
-	/**
-	 * Api constructor.
-	 * @param $apiKey
-	 * @param null $client
-	 * @param null $apiRoot
-	 */
-	public function __construct($apiKey, $client = null, $apiRoot = null)
+	/** @var array */
+	protected $config;
+
+    /**
+     * Api constructor.
+     * @param $apiKey
+     * @param null $client
+     * @param null $apiRoot
+     */
+	public function __construct(HttpClient $httpClient = null)
 	{
-		$this->apiClient = new Client($apiKey, $client = null, $apiRoot = null);
+        $httpClient = $httpClient ?: HttpClientDiscovery::find();
+
+		$this->client = new Client($httpClient);
 	}
 
-	/**
-	 * @param $name
-	 * @param $arguments
-	 * @return App|Destiny2|User
-	 * @throws ModuleNotImplemented
-	 */
-	public function __call($name, $arguments)
-	{
-		return $this->__get($name);
-	}
+    /**
+     * @param $config
+     * @return $this
+     */
+    public function withConfig($config)
+    {
+        $this->apiClient->withConfig($config);
 
-	/**
-	 * @param $name
-	 * @return App|Destiny2|User
-	 * @throws ModuleNotImplemented
-	 */
-	public function __get($name)
-	{
-		$class = __NAMESPACE__ . '\\Api\\Module\\' . ucfirst($name);
+        return $this;
+    }
 
-		if(!isset($this->modules[$name]))
-		{
-			if(class_exists($class))
-			{
-				$this->modules[$name] = new $class($this->apiClient);
-			}
-			else
-			{
-				throw new ModuleNotImplemented($name);
-			}
-		}
+    /**
+     * @return App
+     */
+    public function app()
+    {
+        return new App($this->apiClient);
+    }
 
-		return $this->modules[$name];
-	}
+    /**
+     * @return Auth
+     */
+    public function auth()
+    {
+        return new Auth($this->apiClient);
+    }
+
+    /**
+     * @return Destiny2
+     */
+    public function destiny2()
+    {
+        return new Destiny2($this->apiClient);
+    }
+
+    /**
+     * @return Manifest
+     */
+    public function manifest()
+    {
+        return new Manifest($this->apiClient);
+    }
+
+    /**
+     * @return User
+     */
+    public function user()
+    {
+        return new User($this->apiClient);
+    }
+
+    /**
+     * @return Forum
+     */
+    public function forum()
+    {
+        return new Forum($this->apiClient);
+    }
+
+    /**
+     * @param $hash int
+     * @return int
+     */
+    public static function convertHash($hash)
+    {
+        $maxInt = 2147483647;
+        $minInt = -2147483648;
+
+        if ($hash < 0) {
+            return $hash;
+        } elseif ($hash < $maxInt) {
+            return $hash;
+        }
+
+        return ($minInt - ($maxInt - $hash)) - 1;
+    }
 }
