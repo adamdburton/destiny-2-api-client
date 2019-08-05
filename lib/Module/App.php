@@ -2,6 +2,7 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Module;
 
+use AdamDBurton\Destiny2ApiClient\Exception\Api\AccessTokenRequired;
 use AdamDBurton\Destiny2ApiClient\Exception\Http\HttpException;
 use AdamDBurton\Destiny2ApiClient\Module;
 use AdamDBurton\Destiny2ApiClient\Response;
@@ -23,14 +24,13 @@ class App extends Module
      * @throws ResourceNotFound
      * @throws Unauthorized
      * @throws HttpException
+     * @throws AccessTokenRequired
      */
     public function getApplicationApiUsage($applicationId)
     {
         $this->assertHasAccessToken();
 
-        return $this->request()
-            ->endpoint('App/ApiUsage/' . $applicationId)
-            ->get();
+        return $this->request('App/ApiUsage/' . $applicationId)->get();
     }
 
     /**
@@ -43,9 +43,7 @@ class App extends Module
      */
     public function getBungieApplications()
     {
-        return $this->request()
-            ->endpoint('App/FirstParty')
-            ->get();
+        return $this->request('App/FirstParty')->get();
     }
 
 

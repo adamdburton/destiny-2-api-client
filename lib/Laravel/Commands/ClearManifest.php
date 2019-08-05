@@ -4,6 +4,9 @@ namespace AdamDBurton\Destiny2ApiClient\Laravel\Commands;
 
 use Illuminate\Console\Command as LaravelCommand;
 
+/**
+ * @package AdamDBurton\Destiny2ApiClient\Laravel\Commands
+ */
 class ClearManifest extends LaravelCommand
 {
     /**

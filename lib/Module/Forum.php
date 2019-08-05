@@ -7,6 +7,10 @@ use AdamDBurton\Destiny2ApiClient\Exception\Http\BadRequest;
 use AdamDBurton\Destiny2ApiClient\Exception\Http\HttpException;
 use AdamDBurton\Destiny2ApiClient\Exception\Http\ResourceNotFound;
 use AdamDBurton\Destiny2ApiClient\Exception\Http\Unauthorized;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidForumPostSort;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidForumTopicCategoryFilter;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidForumTopicQuickDate;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidForumTopicSort;
 use AdamDBurton\Destiny2ApiClient\Module;
 use AdamDBurton\Destiny2ApiClient\Response;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumPostSort;
@@ -29,22 +33,25 @@ class Forum extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidForumTopicCategoryFilter
+     * @throws InvalidForumTopicQuickDate
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws \AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidEnum
+     * @throws \AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidEnumArray
      */
     public function getTopicsPaged($page, $pageSize, $group, $sort, $quickDate, $categoryFilter, $locales = 'en', $tagString = '')
     {
-        $this->assertIsForumTopicSort($sort);
-        $this->assertIsForumTopicQuickDate($quickDate);
-        $this->assertIsForumTopicCategoryFilter($categoryFilter);
+        $this->assertIsEnum($sort, ForumTopicSort::class);
+        $this->assertIsEnum($quickDate, ForumTopicQuickDate::class);
+        $this->assertIsEnum($categoryFilter, ForumTopicCategoryFilter::class);
 
         $sort = implode(',', ForumTopicSort::getEnumStringFor($sort));
         $quickDate = implode(',', ForumTopicQuickDate::getEnumStringFor($quickDate));
         $categoryFilter = implode(',', ForumTopicCategoryFilter::getEnumStringFor($categoryFilter));
 
-        return $this->request()
-            ->endpoint('Forum/GetTopicsPaged/' . $page . '/' . $pageSize . '/' . $group . '/' . $sort . '/' . $quickDate . '/' . $categoryFilter)
-            ->params([
+        return $this->request('Forum/GetTopicsPaged/' . $page . '/' . $pageSize . '/' . $group . '/' . $sort . '/' . $quickDate . '/' . $categoryFilter)
+            ->withParams([
                 'locales' => $locales,
                 'tagstring' => $tagString
             ])
@@ -63,6 +70,9 @@ class Forum extends Module
      * @throws HttpException
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidForumTopicCategoryFilter
+     * @throws InvalidForumTopicQuickDate
+     * @throws InvalidForumTopicSort
      */
     public function getCoreTopicsPaged($page, $sort, $quickDate, $categoryFilter, $locales = 'en')
     {
@@ -74,9 +84,8 @@ class Forum extends Module
         $quickDate = implode(',', ForumTopicQuickDate::getEnumStringFor($quickDate));
         $categoryFilter = implode(',', ForumTopicCategoryFilter::getEnumStringFor($categoryFilter));
 
-        return $this->request()
-            ->endpoint('Forum/GetCoreTopicsPaged/' . $page . '/' . $sort . '/' . $quickDate . '/' . $categoryFilter)
-            ->params([
+        return $this->request('Forum/GetCoreTopicsPaged/' . $page . '/' . $sort . '/' . $quickDate . '/' . $categoryFilter)
+            ->withParams([
                 'locales' => $locales
             ])
             ->get();
@@ -97,6 +106,7 @@ class Forum extends Module
      * @throws ResourceNotFound
      * @throws Unauthorized
      * @throws HttpException
+     * @throws InvalidForumPostSort
      */
     public function GetPostsThreadedPaged($parentPostId, $page, $pageSize, $replySize, $getParentPost, $rootThreadMode, $sortMode, $showBanned = false)
     {
@@ -105,9 +115,8 @@ class Forum extends Module
         $sortMode = implode(',', ForumPostSort::getEnumStringFor($sortMode));
         $showBanned = $showBanned ? 'true' : '';
 
-        return $this->request()
-            ->endpoint('Forum/GetPostsThreadedPaged/' . $parentPostId . '/' . $page . '/' . $pageSize . '/' . $replySize . '/' . $getParentPost . '/' . $rootThreadMode . '/' . $sortMode)
-            ->params([
+        return $this->request('Forum/GetPostsThreadedPaged/' . $parentPostId . '/' . $page . '/' . $pageSize . '/' . $replySize . '/' . $getParentPost . '/' . $rootThreadMode . '/' . $sortMode)
+            ->withParams([
                 'showbanned' => $showBanned
             ])
             ->get();

@@ -1,0 +1,4 @@
+parameters:
+    title: "Destiny 2 API Client Docs"
+    base_url: "http://adamdburton.github.io/destiny-2-api-client/docs/api"
+    overwrite: true

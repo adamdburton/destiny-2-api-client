@@ -2,31 +2,42 @@
 
 namespace AdamDBurton\Destiny2ApiClient;
 
-use AdamDBurton\Destiny2ApiClient\Enum\Component;
+use AdamDBurton\Destiny2ApiClient\Enum\BungieMembershipType;
+use AdamDBurton\Destiny2ApiClient\Enum\DestinyComponentType;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumPostSort;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicCategoryFilter;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicQuickDate;
 use AdamDBurton\Destiny2ApiClient\Enum\ForumTopicSort;
-use AdamDBurton\Destiny2ApiClient\Enum\MembershipType;
-use AdamDBurton\Destiny2ApiClient\Exception\AccessTokenRequired;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidActivityType;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidCharacterId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidComponentType;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidDestinyMembershipId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumPostSort;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicCategoryFilter;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicQuickDate;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidForumTopicSort;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidGroupId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemActivityId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemHash;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidItemInstanceId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipId;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidMembershipType;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidMilestoneHash;
-use AdamDBurton\Destiny2ApiClient\Exception\InvalidVendorHash;
-use AdamDBurton\Destiny2ApiClient\Manifest\Manifest;
+use AdamDBurton\Destiny2ApiClient\Enum\GroupDateRange;
+use AdamDBurton\Destiny2ApiClient\Enum\GroupType;
+use AdamDBurton\Destiny2ApiClient\Exception\Api\AccessTokenRequired;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidActivityType;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidBoolean;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidCharacterId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidComponentType;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidDestinyMembershipId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidEnum;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidEnumArray;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidForumPostSort;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidForumTopicCategoryFilter;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidForumTopicQuickDate;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidForumTopicSort;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidGroupConversationId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidGroupDateRange;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidGroupId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidGroupType;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidItemActivityId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidItemHash;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidItemInstanceId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidMembershipId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidMembershipType;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidMilestoneHash;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidString;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidVendorHash;
 
+/**
+ * @package AdamDBurton\Destiny2ApiClient
+ */
 abstract class Module
 {
     protected $api;
@@ -86,12 +97,12 @@ abstract class Module
     }
 
     /**
-     * @param string|null $response
+     * @param string|null $endpoint
      * @return Request
      */
-    public function request(string $response = null)
+    public function request(string $endpoint = null)
     {
-        return $this->api->request($response);
+        return $this->api->request()->withEndpoint($endpoint);
     }
 
     /**
@@ -101,7 +112,7 @@ abstract class Module
      */
     public function getConfig($key, $default = null)
     {
-        return $this->api->getClient()->getConfig($key, $default);
+        return $this->api->getConfig($key, $default);
     }
 
     /**
@@ -213,7 +224,7 @@ abstract class Module
      */
     protected function assertIsMembershipType($membershipType)
     {
-        if (!MembershipType::hasEnum($membershipType)) {
+        if (!BungieMembershipType::hasEnum($membershipType)) {
             throw new InvalidMembershipType($membershipType);
         }
     }
@@ -227,7 +238,7 @@ abstract class Module
         if (is_array($activityType)) {
             array_map([$this, __METHOD__], $activityType);
         } else {
-            if (!MembershipType::hasEnum($activityType)) {
+            if (!BungieMembershipType::hasEnum($activityType)) {
                 throw new InvalidActivityType($activityType);
             }
         }
@@ -242,7 +253,7 @@ abstract class Module
         if (is_array($componentType)) {
             array_map([$this, __METHOD__], $componentType);
         } else {
-            if (!Component::hasEnum($componentType)) {
+            if (!DestinyComponentType::hasEnum($componentType)) {
                 throw new InvalidComponentType($componentType);
             }
         }
@@ -299,6 +310,119 @@ abstract class Module
     {
         if (!$this->api->getClient()->hasAccessToken()) {
             throw new AccessTokenRequired;
+        }
+    }
+
+    /**
+     * @param $string
+     * @throws InvalidString
+     */
+    public function assertIsString($string)
+    {
+        if(!is_string($string))
+        {
+            throw new InvalidString($string);
+        }
+    }
+    /**
+     * @param $boolean
+     * @throws InvalidBoolean
+     */
+    public function assertIsBoolean($boolean)
+    {
+        if(!is_bool($boolean))
+        {
+            throw new InvalidBoolean($boolean);
+        }
+    }
+
+    /**
+     * @param $groupType
+     * @throws InvalidGroupType
+     */
+    protected function assertIsGroupType($groupType)
+    {
+        if(!GroupType::hasEnum($groupType))
+        {
+            throw new InvalidGroupType($groupType);
+        }
+    }
+    /**
+     * @param $dateRange
+     * @throws InvalidGroupDateRange
+     */
+    protected function assertIsGroupDateRange($dateRange)
+    {
+        if(!GroupDateRange::hasEnum($dateRange))
+        {
+            throw new InvalidGroupDateRange($dateRange);
+        }
+    }
+
+    /**
+     * @param $conversationId
+     * @throws InvalidGroupConversationId
+     */
+    protected function assertIsGroupConversationId($conversationId)
+    {
+        if(!strlen(decbin(~$conversationId)) == 64)
+        {
+            throw new InvalidGroupConversationId($conversationId);
+        }
+    }
+
+    /**
+     * @param $value
+     * @param $enumClass
+     * @param bool $allowArray
+     * @throws InvalidEnum
+     * @throws InvalidEnumArray
+     */
+    public function assertIsEnum($value, Enum $enumClass, $allowArray = false)
+    {
+        $validEnum = !$enumClass::hasEnum($value);
+
+        if($allowArray && !is_array($value) && $validEnum)
+        {
+            throw new InvalidEnum($value, $enumClass);
+        }
+        elseif($allowArray && is_array($value))
+        {
+            foreach($value as $item)
+            {
+                if(!$enumClass::hasEnum($item))
+                {
+                    throw new InvalidEnumArray($value, $enumClass);
+                }
+            }
+        }
+        elseif(!$validEnum)
+        {
+            throw new InvalidEnum($value, $enumClass);
+        }
+    }
+    /**
+     * @param $value
+     * @param $enumClass
+     * @throws InvalidEnumArray
+     */
+    public function assertIsEnumArray($value, $enumClass)
+    {
+        if(!is_array($value))
+        {
+            throw new InvalidEnumArray($value, $enumClass);
+        }
+    }
+
+    /**
+     * @param $int
+     * @throws InvalidInteger
+     */
+    public function assertIsInt($int)
+    {
+        if(!is_int($int) || (is_int($int) && $int < 0))
+        {
+            throw new InvalidInteger($int);
         }
     }
 }

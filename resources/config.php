@@ -43,12 +43,13 @@ return [
 
         /*
         |--------------------------------------------------------------------------
-        | Cache driver type. Available drivers: filesystem, sqlite
+        | Cache driver type
+        | Available drivers: filesystem, sqlite
         |--------------------------------------------------------------------------
         */
 
-        'driver' => 'filesystem',
-        // 'driver' => 'sqlite',
+        // 'driver' => 'filesystem',
+        'driver' => 'sqlite',
 
         /*
         |--------------------------------------------------------------------------
@@ -64,12 +65,14 @@ return [
         |--------------------------------------------------------------------------
         */
 
-        'path' => storage_path('destiny2manifest'),
-        // 'path' => database_path('destiny2manifest.sqlite'),
+        // 'path' => storage_path('destiny2manifest'),
+        'path' => database_path('destiny2manifest.sqlite'),
 
         /*
         |--------------------------------------------------------------------------
         | Language
+        | Available languages: en, fr, es, es-mx, de, it, jp, pt-br, ru, pl, ko,
+        |                      zh-cht, zh-chs
         |--------------------------------------------------------------------------
         */
 

@@ -2,15 +2,28 @@
 
 namespace AdamDBurton\Destiny2ApiClient\Module;
 
+use AdamDBurton\Destiny2ApiClient\Exception\Api\AccessTokenRequired;
 use AdamDBurton\Destiny2ApiClient\Exception\Http\ApiUnavailable;
 use AdamDBurton\Destiny2ApiClient\Exception\Http\BadRequest;
 use AdamDBurton\Destiny2ApiClient\Exception\Http\HttpException;
 use AdamDBurton\Destiny2ApiClient\Exception\Http\ResourceNotFound;
 use AdamDBurton\Destiny2ApiClient\Exception\Http\Unauthorized;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidActivityType;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidCharacterId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidComponentType;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidDestinyMembershipId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidGroupId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidItemActivityId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidItemHash;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidItemInstanceId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidMembershipId;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidMembershipType;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidMilestoneHash;
+use AdamDBurton\Destiny2ApiClient\Exception\Validation\InvalidVendorHash;
 use AdamDBurton\Destiny2ApiClient\Module;
 use AdamDBurton\Destiny2ApiClient\Response;
-use AdamDBurton\Destiny2ApiClient\Enum\Activity;
-use AdamDBurton\Destiny2ApiClient\Enum\Component;
+use AdamDBurton\Destiny2ApiClient\Enum\DestinyActivityModeType;
+use AdamDBurton\Destiny2ApiClient\Enum\DestinyComponentType;
 use AdamDBurton\Destiny2ApiClient\Enum\Period;
 use AdamDBurton\Destiny2ApiClient\Enum\StatsGroup;
 use AdamDBurton\Destiny2ApiClient\Response\Destiny2\ActivityHistory;
@@ -30,9 +43,7 @@ class Destiny2 extends Module
      */
     public function getGlobalAlerts()
     {
-        return $this->request()
-            ->endpoint('GlobalAlerts')
-            ->get();
+        return $this->request('GlobalAlerts')->get();
     }
 
     /**
@@ -45,9 +56,7 @@ class Destiny2 extends Module
      */
     public function getDestinyManifest()
     {
-        return $this->request()
-            ->endpoint('Destiny2/Manifest')
-            ->get();
+        return $this->request('Destiny2/Manifest')->get();
     }
 
     /**
@@ -59,14 +68,13 @@ class Destiny2 extends Module
      * @throws HttpException
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidItemHash
      */
     public function getDestinyEntityDefinition($entityType, $itemHash)
     {
         $this->assertIsItemHash($itemHash);
 
-        return $this->request()
-            ->endpoint('Destiny2/Manifest/' . $entityType . '/' . $itemHash)
-            ->get();
+        return $this->request('Destiny2/Manifest/' . $entityType . '/' . $itemHash)->get();
     }
 
     /**
@@ -78,14 +86,13 @@ class Destiny2 extends Module
      * @throws HttpException
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidMembershipType
      */
     public function searchDestinyPlayer($membershipType, $displayName)
     {
         $this->assertIsMembershipType($membershipType);
 
-        return $this->request()
-            ->endpoint('Destiny2/SearchDestinyPlayer/' . $membershipType . '/' . $displayName)
-            ->get();
+        return $this->request('Destiny2/SearchDestinyPlayer/' . $membershipType . '/' . $displayName)->get();
     }
 
     /**
@@ -96,8 +103,11 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidComponentType
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidMembershipId
      */
     public function getProfile($membershipType, $destinyMembershipId, $components)
     {
@@ -105,11 +115,10 @@ class Destiny2 extends Module
         $this->assertIsMembershipId($destinyMembershipId);
         $this->assertIsComponentType($components);
 
-        $components = implode(',', Component::getEnumStringsFor($components));
+        $components = implode(',', DestinyComponentType::getEnumStringsFor($components));
 
-        return $this->request()
-            ->endpoint('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId)
-            ->params(['components' => $components])
+        return $this->request('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId)
+            ->withParams(['components' => $components])
             ->get();
     }
 
@@ -122,6 +131,9 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
      */
@@ -131,11 +143,10 @@ class Destiny2 extends Module
         $this->assertIsDestinyMembershipId($destinyMembershipId);
         $this->assertIsCharacterId($characterId);
 
-        $components = implode(',', Component::getEnumStringsFor($components));
+        $components = implode(',', DestinyComponentType::getEnumStringsFor($components));
 
-        return $this->request()
-            ->endpoint('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId)
-            ->params(['components' => $components])
+        return $this->request('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId)
+            ->withParams(['components' => $components])
             ->get();
     }
 
@@ -147,14 +158,13 @@ class Destiny2 extends Module
      * @throws HttpException
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidGroupId
      */
     public function getClanWeeklyRewardState($groupId)
     {
         $this->assertIsGroupId($groupId);
 
-        return $this->request()
-            ->endpoint('Destiny2/Clan/' . $groupId . '/WeeklyRewardState')
-            ->get();
+        return $this->request('Destiny2/Clan/' . $groupId . '/WeeklyRewardState')->get();
     }
 
     /**
@@ -168,6 +178,10 @@ class Destiny2 extends Module
      * @throws HttpException
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidComponentType
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidItemInstanceId
+     * @throws InvalidMembershipType
      */
     public function getItem($membershipType, $destinyMembershipId, $itemInstanceId, $components)
     {
@@ -175,11 +189,11 @@ class Destiny2 extends Module
         $this->assertIsDestinyMembershipId($destinyMembershipId);
         $this->assertIsItemInstanceId($itemInstanceId);
         $this->assertIsComponentType($components);
-        $components = implode(',', Component::getEnumStringsFor($components));
 
-        return $this->request()
-            ->endpoint('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Item/' . $itemInstanceId)
-            ->params(['components' => $components])
+        $components = implode(',', DestinyComponentType::getEnumStringsFor($components));
+
+        return $this->request('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Item/' . $itemInstanceId)
+            ->withParams(['components' => $components])
             ->get();
     }
 
@@ -192,8 +206,12 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidComponentType
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidCharacterId
      */
     public function getVendors($membershipType, $destinyMembershipId, $characterId, $components)
     {
@@ -202,11 +220,10 @@ class Destiny2 extends Module
         $this->assertIsCharacterId($characterId);
         $this->assertIsComponentType($components);
 
-        $components = implode(',', Component::getEnumStringsFor($components));
+        $components = implode(',', DestinyComponentType::getEnumStringsFor($components));
 
-        return $this->request()
-            ->endpoint('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors')
-            ->params(['components' => $components])
+        return $this->request('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors')
+            ->withParams(['components' => $components])
             ->get();
     }
 
@@ -220,8 +237,13 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidComponentType
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidVendorHash
      */
     public function getVendor($membershipType, $destinyMembershipId, $characterId, $vendorHash, $components)
     {
@@ -231,11 +253,10 @@ class Destiny2 extends Module
         $this->assertIsVendorHash($vendorHash);
         $this->assertIsComponentType($components);
 
-        $components = implode(',', Component::getEnumStringsFor($components));
+        $components = implode(',', DestinyComponentType::getEnumStringsFor($components));
 
-        return $this->request()
-            ->endpoint('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors/' . $vendorHash)
-            ->params(['components' => $components])
+        return $this->request('Destiny2/' . $membershipType . '/Profile/' . $destinyMembershipId . '/Character/' . $characterId . '/Vendors/' . $vendorHash)
+            ->withParams(['components' => $components])
             ->get();
     }
 
@@ -250,8 +271,13 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidItemInstanceId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws AccessTokenRequired
+     * @throws InvalidItemHash
      */
     public function transferItem($itemHash, $stackSize, $toVault, $itemInstanceId, $characterId, $membershipType)
     {
@@ -262,16 +288,16 @@ class Destiny2 extends Module
         $this->assertIsItemHash($itemHash);
         $this->assertIsItemInstanceId($itemInstanceId);
 
-        return $this->request()
-            ->endpoint('Destiny2/Actions/Items/TransferItem')
-            ->postAsJson([
+        return $this->request('Destiny2/Actions/Items/TransferItem')
+            ->withBody([
                 'itemReferenceHash' => $itemHash,
                 'stackSize' => $stackSize,
                 'transferToVault' => $toVault,
                 'itemId' => $itemInstanceId,
                 'characterId' => $characterId,
                 'membershipType' => $membershipType
-            ]);
+            ])
+            ->postAsJson();
     }
 
     /**
@@ -282,8 +308,12 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidItemInstanceId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws AccessTokenRequired
      */
     public function equipItem($itemInstanceId, $characterId, $membershipType)
     {
@@ -293,13 +323,13 @@ class Destiny2 extends Module
         $this->assertIsCharacterId($characterId);
         $this->assertIsItemInstanceId($itemInstanceId);
 
-        return $this->request()
-            ->endpoint('Destiny2/Actions/Items/EquipItem')
-            ->postAsJson([
+        return $this->request('Destiny2/Actions/Items/EquipItem')
+            ->withBody([
                 'itemId' => $itemInstanceId,
                 'characterId' => $characterId,
                 'membershipType' => $membershipType
-            ]);
+            ])
+            ->postAsJson();
     }
 
     /**
@@ -307,9 +337,13 @@ class Destiny2 extends Module
      * @param $characterId
      * @param $membershipType
      * @return Response
+     * @throws AccessTokenRequired
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidItemInstanceId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
      */
@@ -321,13 +355,13 @@ class Destiny2 extends Module
         $this->assertIsCharacterId($characterId);
         $this->assertIsItemInstanceId($itemInstanceIds);
 
-        return $this->request()
-            ->endpoint('Destiny2/Actions/Items/EquipItems')
-            ->postAsJson([
+        return $this->request('Destiny2/Actions/Items/EquipItems')
+            ->withBody([
                 'itemIds' => $itemInstanceIds,
                 'characterId' => $characterId,
                 'membershipType' => $membershipType
-            ]);
+            ])
+            ->postAsJson();
     }
 
     /**
@@ -339,8 +373,12 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidItemInstanceId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws AccessTokenRequired
      */
     public function setItemLockState($state, $itemInstanceId, $characterId, $membershipType)
     {
@@ -350,14 +388,14 @@ class Destiny2 extends Module
         $this->assertIsCharacterId($characterId);
         $this->assertIsItemInstanceId($itemInstanceId);
 
-        return $this->request()
-            ->endpoint('Destiny2/Actions/Items/SetLockState')
-            ->postAsJson([
+        return $this->request('Destiny2/Actions/Items/SetLockState')
+            ->withBody([
                 'state' => $state,
                 'itemId' => $itemInstanceId,
                 'characterId' => $characterId,
                 'membershipType' => $membershipType
-            ]);
+            ])
+            ->postAsJson();
     }
 
     /**
@@ -368,8 +406,12 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidItemInstanceId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws AccessTokenRequired
      */
     public function insertSocketPlug($itemInstanceId, $characterId, $membershipType)
     {
@@ -379,13 +421,13 @@ class Destiny2 extends Module
         $this->assertIsCharacterId($characterId);
         $this->assertIsItemInstanceId($itemInstanceId);
 
-        return $this->request()
-            ->endpoint('Destiny2/Actions/Items/InsertSocketPlug')
-            ->postAsJson([
+        return $this->request('Destiny2/Actions/Items/InsertSocketPlug')
+            ->withBody([
                 'itemId' => $itemInstanceId,
                 'characterId' => $characterId,
                 'membershipType' => $membershipType
-            ]);
+            ])
+            ->postAsJson();
     }
 
     /**
@@ -396,8 +438,12 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidItemInstanceId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws AccessTokenRequired
      */
     public function activateTalentNode($itemInstanceId, $characterId, $membershipType)
     {
@@ -407,13 +453,13 @@ class Destiny2 extends Module
         $this->assertIsCharacterId($characterId);
         $this->assertIsItemInstanceId($itemInstanceId);
 
-        return $this->request()
-            ->endpoint('Destiny2/Actions/Items/ActivateTalentNode')
-            ->postAsJson([
+        return $this->request('Destiny2/Actions/Items/ActivateTalentNode')
+            ->withBody([
                 'itemId' => $itemInstanceId,
                 'characterId' => $characterId,
                 'membershipType' => $membershipType
-            ]);
+            ])
+            ->postAsJson();
     }
 
     /**
@@ -424,14 +470,13 @@ class Destiny2 extends Module
      * @throws HttpException
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidItemActivityId
      */
     public function getPostGameCarnageReport($activityId)
     {
         $this->assertIsActivityId($activityId);
 
-        return $this->request()
-            ->endpoint('Destiny2/Stats/PostGameCarnageReport/' . $activityId)
-            ->get();
+        return $this->request('Destiny2/Stats/PostGameCarnageReport/' . $activityId)->get();
     }
 
     /**
@@ -444,9 +489,7 @@ class Destiny2 extends Module
      */
     public function getHistoricalStatsDefinition()
     {
-        return $this->request()
-            ->endpoint('Destiny2/Stats/Definition')
-            ->get();
+        return $this->request('Destiny2/Stats/Definition')->get();
     }
 
     /**
@@ -457,14 +500,13 @@ class Destiny2 extends Module
      * @throws HttpException
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidGroupId
      */
     public function getClanLeaderboards($groupId)
     {
         $this->assertIsGroupId($groupId);
 
-        return $this->request()
-            ->endpoint('Destiny2/Stats/Leaderboards/Clans/' . $groupId)
-            ->get();
+        return $this->request('Destiny2/Stats/Leaderboards/Clans/' . $groupId)->get();
     }
 
     /**
@@ -475,14 +517,13 @@ class Destiny2 extends Module
      * @throws HttpException
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidGroupId
      */
     public function getClanAggregateStats($groupId)
     {
         $this->assertIsGroupId($groupId);
 
-        return $this->request()
-            ->endpoint('Destiny2/Stats/AggregateClanStats/' . $groupId)
-            ->get();
+        return $this->request('Destiny2/Stats/AggregateClanStats/' . $groupId)->get();
     }
 
     /**
@@ -495,8 +536,11 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidActivityType
      */
     public function getLeaderboards($membershipTypeId, $destinyMembershipId, $maxPlayers, $modes, $statId)
     {
@@ -504,11 +548,10 @@ class Destiny2 extends Module
         $this->assertIsDestinyMembershipId($destinyMembershipId);
         $this->assertIsActivityType($modes);
 
-        $modes = implode(',', Activity::getEnumStringsFor($modes));
+        $modes = $modes ? implode(',', DestinyActivityModeType::getEnumStringsFor($modes)) : null;
 
-        return $this->request()
-            ->endpoint('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Stats/Leaderboards')
-            ->params([
+        return $this->request('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Stats/Leaderboards')
+            ->withParams([
                 'maxtop' => $maxPlayers,
                 'modes' => $modes,
                 'statid' => $statId
@@ -527,8 +570,12 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidActivityType
      */
     public function getLeaderboardsForCharacter($membershipTypeId, $destinyMembershipId, $characterId, $maxPlayers = null, $modes = null, $statId = null)
     {
@@ -537,11 +584,10 @@ class Destiny2 extends Module
         $this->assertIsCharacterId($characterId);
         $this->assertIsActivityType($modes);
 
-        $modes = $modes ? implode(',', Activity::getEnumStringsFor($modes)) : null;
+        $modes = $modes ? implode(',', DestinyActivityModeType::getEnumStringsFor($modes)) : null;
 
-        return $this->request()
-            ->endpoint('Destiny2/Stats/Leaderboards/' . $membershipTypeId . '/' . $destinyMembershipId . '/' . $characterId)
-            ->params([
+        return $this->request('Destiny2/Stats/Leaderboards/' . $membershipTypeId . '/' . $destinyMembershipId . '/' . $characterId)
+            ->withParams([
                 'maxtop' => $maxPlayers,
                 'modes' => $modes,
                 'statid' => $statId
@@ -562,9 +608,8 @@ class Destiny2 extends Module
      */
     public function searchDestinyEntities($entityType, $searchTerm, $page = 0)
     {
-        return $this->request()
-            ->endpoint('Destiny2/Armory/Search/' . $entityType . '/' . $searchTerm)
-            ->params([
+        return $this->request('Destiny2/Armory/Search/' . $entityType . '/' . $searchTerm)
+            ->withParams([
                 'page' => $page
             ])
             ->get();
@@ -583,6 +628,9 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
      */
@@ -592,12 +640,11 @@ class Destiny2 extends Module
         $this->assertIsDestinyMembershipId($destinyMembershipId);
         $this->assertIsCharacterId($characterId);
 
-        $modes = $modes ? implode(',', Activity::getEnumStringsFor($modes)) : null;
+        $modes = $modes ? implode(',', DestinyActivityModeType::getEnumStringsFor($modes)) : null;
         $groups = $groups ? implode(',', StatsGroup::getEnumStringsFor($groups)) : null;
 
-        return $this->request()
-            ->endpoint('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats')
-            ->params([
+        return $this->request('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats')
+            ->withParams([
                 'dayend' => $dayEnd,
                 'daystart' => $dayStart,
                 'groups' => $groups,
@@ -615,6 +662,8 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
      */
@@ -625,9 +674,8 @@ class Destiny2 extends Module
 
         $groups = $groups ? implode(',', StatsGroup::getEnumStringsFor($groups)) : null;
 
-        return $this->request()
-            ->endpoint('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Stats')
-            ->params([
+        return $this->request('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Stats')
+            ->withParams([
                 'groups' => $groups
             ])
             ->get();
@@ -644,6 +692,9 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
      */
@@ -654,9 +705,9 @@ class Destiny2 extends Module
         $this->assertIsCharacterId($characterId);
 
         return $this
-            ->request(ActivityHistory::class)
-            ->endpoint('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/Activities')
-            ->params([
+            ->request('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/Activities')
+            ->withResponse(ActivityHistory::class)
+            ->withParams([
                 'count' => $count,
                 'mode' => $mode,
                 'page' => $page
@@ -672,6 +723,9 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
      */
@@ -681,9 +735,7 @@ class Destiny2 extends Module
         $this->assertIsDestinyMembershipId($destinyMembershipId);
         $this->assertIsCharacterId($characterId);
 
-        return $this->request()
-            ->endpoint('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/UniqueWeapons')
-            ->get();
+        return $this->request('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/UniqueWeapons')->get();
     }
 
     /**
@@ -694,6 +746,9 @@ class Destiny2 extends Module
      * @throws ApiUnavailable
      * @throws BadRequest
      * @throws HttpException
+     * @throws InvalidCharacterId
+     * @throws InvalidDestinyMembershipId
+     * @throws InvalidMembershipType
      * @throws ResourceNotFound
      * @throws Unauthorized
      */
@@ -703,9 +758,7 @@ class Destiny2 extends Module
         $this->assertIsDestinyMembershipId($destinyMembershipId);
         $this->assertIsCharacterId($characterId);
 
-        return $this->request()
-            ->endpoint('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/AggregateActivityStats')
-            ->get();
+        return $this->request('Destiny2/' . $membershipTypeId . '/Account/' . $destinyMembershipId . '/Character/' . $characterId . '/Stats/AggregateActivityStats')->get();
     }
 
     /**
@@ -716,14 +769,13 @@ class Destiny2 extends Module
      * @throws HttpException
      * @throws ResourceNotFound
      * @throws Unauthorized
+     * @throws InvalidMilestoneHash
      */
     public function getPublicMilestoneContent($milestoneHash)
     {
         $this->assertIsMilestoneHash($milestoneHash);
 
-        return $this->request()
-            ->endpoint('Destiny2/Milestones/' . $milestoneHash . '/Content')
-            ->get();
+        return $this->request('Destiny2/Milestones/' . $milestoneHash . '/Content')->get();
     }
 
     /**
@@ -736,8 +788,6 @@ class Destiny2 extends Module
      */
     public function getPublicMilestones()
     {
-        return $this->request()
-            ->endpoint('Destiny2/Milestones')
-            ->get();
+        return $this->request('Destiny2/Milestones')->get();
     }
 }

@@ -6,42 +6,55 @@
 
 Endpoint documentation is available at https://bungie-net.github.io/multi/
 
-## Usage
+### Usage
 
-You will need an API key from https://www.bungie.net/en/Application and some endpoints require access tokens (available by logging in through Bungie oAuth - see https://lowlidev.com.au/destiny/authentication-2 for authentiation flow examples)
+Visit https://www.bungie.net/en/Application to obtain an API key. Some endpoints require an access token to perform actions on behalf of users which can be obtained by redirecting users to Bungie's OAuth server. The Auth module can assist with .
+
+#### Examples
+
+``` php
+<?php
+
+use AdamDBurton\Destiny2ApiClient\Api;
+
+$api = new Api('{api-key}');
+
+$api->destiny2()
+    ->getDestinyManifest();
+
+$api->user()
+    ->withAccessToken('{oauth-token}')
+    ->getMembershipDataForCurrentUser();
+```
+
+### Modules
+
+The API is split into modules, similarly to the API itself. Each method in a module maps one-to-one to end endpoint in the API.
+
+##### App
 
 ```
-$api = new \AdamDBurton\Destiny2ApiClient\Api('{api-key}');
+$api->app()->getBungieApplications()
+$api->app()->getApplicationApiUsage(string $applicationId)
 ```
 
-## Modules
+##### Destiny2
 
-#### App
-Implementation - https://github.com/adamdburton/destiny-2-api-client/blob/master/src/Api/Module/App.php
-Accessed through - `$api->app()`
+```
 
-#### Destiny2
-Implementation - https://github.com/adamdburton/destiny-2-api-client/blob/master/src/Api/Module/Destiny2.php
-Accessed through - `$api->destiny2()`
+```
 
 #### User
-Implementation - https://github.com/adamdburton/destiny-2-api-client/blob/master/src/Api/Module/User.php
-Accessed through - `$api->user()`
+`$api->user()`
 
-#### Forum
-Not yet implemented
+##### Forum
+`$api->forum()`
 
-#### GroupV2
-Not yet implemented
+##### GroupV2
+`$api->groupV2()`
 
-#### CommunityContent
-Not yet implemented
+##### CommunityContent
+`$api->communityContent()`
 
-#### Trending
-Not yet implemented
-
-## oAuth
-
-Some endpoints require an oAuth token with applicable scope permissions.
-
-`$api->user()->withAccessToken('{oauth-token}')->getMembershipDataForCurrentUser();`
+##### Trending
+`$api->trending()`

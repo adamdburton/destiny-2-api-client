@@ -4,53 +4,57 @@ namespace AdamDBurton\Destiny2ApiClient\Manifest\Drivers;
 
 use AdamDBurton\Destiny2ApiClient\Exception\Manifest\DefinitionNotFound;
 use AdamDBurton\Destiny2ApiClient\Manifest\Driver;
+use Exception;
 use stdClass;
 
+/**
+ * @package AdamDBurton\Destiny2ApiClient\Manifest\Drivers
+ */
 class Filesystem extends Driver
 {
     /** @var string */
     protected $path;
 
-    public function __construct($path)
+    /**
+     * @param string $path
+     * @return bool
+     */
+    public function load(string $path): bool
     {
         $this->path = rtrim($path, '/');
+
+        return is_dir($this->path);
     }
 
     /**
      * @param string $type
      * @param int $hash
-     * @return stdClass
-     * @throws DefinitionNotFound
+     * @return array
      */
-    public function getDefinition($type, $hash)
+    public function getDefinition($type, $hash): array
     {
         $data = json_decode(file_get_contents(sprintf('%s/Destiny%sDefinition.json', $this->path, $type)), true);
 
-        if (!isset($data[$hash])) {
-            throw new DefinitionNotFound($type, $hash);
-        }
-
-        return json_decode($data[$hash], true);
+        return isset($data[$hash]) ? json_decode($data[$hash], true) : null;
     }
 
     /**
      * @param string $type
      * @param int[] $hashes
-     * @return stdClass[]
-     * @throws DefinitionNotFound
+     * @return array[]
      */
-    public function getDefinitions(string $type, array $hashes)
+    public function getDefinitions(string $type, array $hashes): array
     {
         $data = json_decode(file_get_contents(sprintf('%s/Destiny%sDefinition.json', $this->path, $type)), true);
 
         $definitions = [];
 
         foreach ($hashes as $hash) {
-            if (!isset($data[$hash])) {
-                throw new DefinitionNotFound($type, $hash);
+            if(file_exists($data[$hash])) {
+                $definitions[$hash] = json_decode($data[$hash], true);
+            } else {
+                $definitions[$hash] = null;
             }
-
-            $definitions[$hash] = json_decode($data[$hash], true);
         }
 
         return $definitions;
@@ -58,11 +62,10 @@ class Filesystem extends Driver
 
     /**
      * @param string $path
-     * @return mixed
-     * @throws \Exception
+     * @return bool
      */
-    public function export(string $path)
+    public function export(string $path): bool
     {
-        throw new \Exception('Cannot export with Filesystem driver.');
+        throw new ('The Filesystem driver does not support being exported.');
     }
 }

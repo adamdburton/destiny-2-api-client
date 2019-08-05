@@ -19,6 +19,9 @@ class Middleware implements MiddlewareContract
      */
     protected $api;
 
+    /**
+     * @param array $middleware
+     */
     public function __construct(array $middleware = [])
     {
         $this->middleware = $middleware;
@@ -72,15 +75,15 @@ class Middleware implements MiddlewareContract
      */
     public function handle($payload, Closure $next)
     {
-        $coreFunction = $this->createCoreFunction($next);
+        $next = $this->next($next);
 
-        $middleware = array_reverse($this->middleware);
+        $reversed = array_reverse($this->middleware);
 
-        $complete = array_reduce($middleware, function ($nextMiddleware, $middleware) {
-            return $this->createMiddleware($nextMiddleware, $middleware);
-        }, $coreFunction);
+        $last = array_reduce($reversed, function ($nextMiddleware, $middleware) {
+            return $this->factory($nextMiddleware, $middleware);
+        }, $next);
 
-        return $complete($payload);
+        return $last($payload);
     }
 
     /**
@@ -95,7 +98,7 @@ class Middleware implements MiddlewareContract
      * @param Closure $next
      * @return Closure
      */
-    private function createCoreFunction(Closure $next)
+    private function next(Closure $next)
     {
         return function ($payload) use ($next) {
             return $next($payload);
@@ -107,7 +110,7 @@ class Middleware implements MiddlewareContract
      * @param $middleware
      * @return Closure
      */
-    private function createMiddleware($nextMiddleware, $middleware)
+    private function factory($nextMiddleware, Middleware $middleware)
     {
         return function ($payload) use ($nextMiddleware, $middleware) {
             return $middleware->handle($payload, $nextMiddleware);

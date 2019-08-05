@@ -5,6 +5,9 @@ namespace AdamDBurton\Destiny2ApiClient\Response\Destiny2;
 use AdamDBurton\Destiny2ApiClient\Manifest\Definitions\Activity;
 use AdamDBurton\Destiny2ApiClient\Response;
 
+/**
+ * @package AdamDBurton\Destiny2ApiClient\Response\Destiny2
+ */
 class ActivityHistory extends Response
 {
     /**

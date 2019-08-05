@@ -7,6 +7,9 @@ use AdamDBurton\Destiny2ApiClient\Laravel\Commands\CacheManifest;
 use AdamDBurton\Destiny2ApiClient\Laravel\Commands\ClearManifest;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
+/**
+ * @package AdamDBurton\Destiny2ApiClient\Laravel
+ */
 class ServiceProvider extends LaravelServiceProvider
 {
     public function boot()

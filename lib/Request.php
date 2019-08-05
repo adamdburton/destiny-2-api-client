@@ -27,6 +27,9 @@ class Request implements RequestContract
     protected $params = [];
 
     /** @var array */
+    protected $body = [];
+
+    /** @var array */
     protected $headers = [];
 
     /** @var array */
@@ -44,7 +47,7 @@ class Request implements RequestContract
      * @param string $response
      * @return Request
      */
-    public function response(string $response)
+    public function withResponse(string $response)
     {
         $this->response = $response;
 
@@ -56,7 +59,7 @@ class Request implements RequestContract
      * @param array $params
      * @return $this
      */
-    public function endpoint(string $endpoint, array $params = [])
+    public function withEndpoint(string $endpoint, array $params = [])
     {
         $this->endpoint = $endpoint;
         $this->params = $params;
@@ -68,7 +71,7 @@ class Request implements RequestContract
      * @param array $headers
      * @return $this
      */
-    public function headers(array $headers)
+    public function withHeaders(array $headers)
     {
         $this->headers = $headers;
 
@@ -79,9 +82,31 @@ class Request implements RequestContract
      * @param array $params
      * @return $this
      */
-    public function params(array $params)
+    public function withParams(array $params)
     {
         $this->params = $params;
+
+        return $this;
+    }
+
+    /**
+     * @param array $body
+     * @return $this
+     */
+    public function withBody(array $body)
+    {
+        $this->body = $body;
+
+        return $this;
+    }
+
+    /**
+     * @param RequestParam $requestParam
+     * @return $this
+     */
+    public function withRequestParam(RequestParam $requestParam)
+    {
+        $this->body = $requestParam->toArray();
 
         return $this;
     }
@@ -90,7 +115,7 @@ class Request implements RequestContract
      * @param array $options
      * @return $this
      */
-    public function options(array $options)
+    public function withOptions(array $options)
     {
         $this->options = $options;
 
@@ -130,7 +155,7 @@ class Request implements RequestContract
             ->getClient()
             ->request('POST', $this->endpoint, [
                 'query' => $this->params,
-                'form_params' => $data,
+                'form_params' => $data ?: $this->body,
                 'headers' => array_merge($this->headers, $this->mergeHeaders([
                     'Content-Type' => 'application/x-www-form-urlencoded'
                 ]))
@@ -146,13 +171,13 @@ class Request implements RequestContract
      * @throws ResourceNotFound
      * @throws Unauthorized
      */
-    public function postAsJson(array $data = []): Response
+    public function postAsJson(array $data = null): Response
     {
         return $this->api
             ->getClient()
             ->request('POST', $this->endpoint, [
                 'query' => $this->params,
-                'body' => json_encode($data),
+                'body' => json_encode($data ?: $this->body),
                 'headers' => array_merge($this->headers, $this->mergeHeaders([
                     'Content-Type' => 'application/json'
                 ]))

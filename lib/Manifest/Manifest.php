@@ -5,7 +5,6 @@ namespace AdamDBurton\Destiny2ApiClient\Manifest;
 use AdamDBurton\Destiny2ApiClient\Exception\Manifest\DefinitionNotFound;
 use AdamDBurton\Destiny2ApiClient\Manifest\Drivers\Filesystem;
 use AdamDBurton\Destiny2ApiClient\Manifest\Drivers\Sqlite;
-use ZipArchive;
 
 /**
  * @package AdamDBurton\Destiny2ApiClient\Manifest
@@ -23,43 +22,37 @@ class Manifest
     }
 
     /**
-     * @param $url
+     * @param $driver
+     * @param string $path
      * @return Manifest
      */
-    public static function fromUrl($url)
+    public static function make($driver, string $path): Manifest
     {
-        return new static(new Sqlite(self::downloadManifest($url)));
+        return new static(new $driver($path));
     }
 
     /**
-     * @param $directory
+     * @param string $path
      * @return Manifest
      */
-    public static function fromDirectory($directory)
+    public static function fromFile(string $path)
     {
-        return new static(new Filesystem($directory));
+        $driver = new Sqlite();
+        $driver->load($path);
+
+        return new static($driver);
     }
 
     /**
-     * @param $url
-     * @return string
+     * @param string $path
+     * @return Manifest
      */
-    protected static function downloadManifest($url)
+    public static function fromDirectory(string $path)
     {
-        $manifestName = basename($url);
+        $driver = new Filesystem();
+        $driver->load($path);
 
-        $zip = file_get_contents('https://bungie.net' . $url);
-        $temp = tempnam(sys_get_temp_dir(), 'D2');
-
-        file_put_contents($temp, $zip);
-
-        $zip = new ZipArchive;
-
-        if ($zip->open($temp) === TRUE) {
-            file_put_contents($temp, $zip->getFromName($manifestName));
-        }
-
-        return $temp;
+        return new static($driver);
     }
 
     /**
@@ -120,30 +113,22 @@ class Manifest
      * @param string $path
      * @return bool
      */
-    public function exportToFile(string $path): bool
+    public function export(string $path): bool
     {
-        return $this->driver->exportToFile($path);
-    }
-
-    /**
-     * @param string $path
-     * @return bool
-     */
-    public function exportToDirectory(string $path): bool
-    {
-        return $this->driver->exportToDirectory($path);
+        return $this->driver->export($path);
     }
 
     /**
      * @param array $hashes
      * @param array $rawDefinitions
      * @param string $type
+     * @return void
      * @throws DefinitionNotFound
      */
-    protected function assertAllHashesAreDefined(array $hashes, array $rawDefinitions, string $type)
+    protected function assertAllHashesAreDefined($hashes, array $rawDefinitions, string $type): void
     {
         foreach($hashes as $hash) {
-            if(!isset($rawDefinitions[$hash])) {
+            if(!isset($rawDefinitions[$hash]) || !$rawDefinitions[$hash]) {
                 throw new DefinitionNotFound($type, $hash);
             }
         }

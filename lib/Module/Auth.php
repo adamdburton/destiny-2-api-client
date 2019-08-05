@@ -44,12 +44,10 @@ class Auth extends Module
         $clientId = $this->getConfig('client_id', $oAuthClientId);
         $clientSecret = $this->getConfig('client_secret', $oAuthClientSecret);
 
-        return $this->request()
-            ->endpoint('App/OAuth/Token')
-            ->params(['code' => $authCode, 'grant_type' => 'authorization_code'])
-            ->postAsForm([
-                'Authorization' => 'Basic ' . base64_encode($clientId . ':' . $clientSecret)
-            ]);
+        return $this->request('App/OAuth/Token')
+            ->withParams(['code' => $authCode, 'grant_type' => 'authorization_code'])
+            ->withHeaders(['Authorization' => 'Basic ' . base64_encode($clientId . ':' . $clientSecret)])
+            ->postAsForm();
     }
 
     /**
@@ -68,11 +66,9 @@ class Auth extends Module
         $clientId = $this->getConfig('client_id', $oAuthClientId);
         $clientSecret = $this->getConfig('client_secret', $oAuthClientSecret);
 
-        return $this->request()
-            ->endpoint('App/OAuth/Token')
-            ->params(['refresh_token' => $refreshToken, 'grant_type' => 'refresh_token'])
-            ->postAsForm([
-                'Authorization' => 'Basic ' . base64_encode($clientId . ':' . $clientSecret)
-            ]);
+        return $this->request('App/OAuth/Token')
+            ->withParams(['refresh_token' => $refreshToken, 'grant_type' => 'refresh_token'])
+            ->withBody(['Authorization' => 'Basic ' . base64_encode($clientId . ':' . $clientSecret)])
+            ->postAsForm();
     }
 }
